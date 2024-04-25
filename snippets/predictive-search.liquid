@@ -1,0 +1,43 @@
+{%- if settings.predictive_search_enabled -%}
+<predictive-search
+  data-routes="{{ routes.predictive_search_url | default: '/search/suggest' }}"
+  data-show-only-products="{{ settings.search_show_products_only | default: 'false' }}"
+  data-results-per-resource="6"
+  data-input-selector='input[name="q"]'
+  data-results-selector="#predictive-search-mobile"
+  >
+{%- endif -%}
+  <form action="/search" method="get">
+    <label class="visually-hidden" for="searchbox-{{ section.id }}">{{ 'sections.search.placeholder' | t }}</label>
+    <input
+      type="text"
+      name="q"
+      id="searchbox-{{ section.id }}"
+      class="searchbox__input"
+      placeholder="{{ 'sections.search.placeholder' | t }}"
+      value="{{ search.terms | escape }}"
+      {%- if settings.predictive_search_enabled -%}
+        role="combobox"
+        aria-expanded="false"
+        aria-owns="predictive-search-results-list"
+        aria-controls="predictive-search-results-list"
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+        autocorrect="off"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      {%- endif -%} />
+    <input name="options[prefix]" type="hidden" value="last">
+
+    {% if settings.search_show_products_only %}
+      <input type="hidden" name="type" value="product">
+    {% endif %}
+
+    {%- if settings.predictive_search_enabled -%}
+      <div id="predictive-search-mobile" class="predictive-search" tabindex="-1"></div>
+    {%- endif -%}
+  </form>
+{%- if settings.predictive_search_enabled -%}
+</predictive-search>
+{%- endif -%}

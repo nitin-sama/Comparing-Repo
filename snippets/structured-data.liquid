@@ -1,0 +1,102 @@
+{% if template contains 'index' or page.handle == 'about-wet' %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Wet Swimwear",
+    "url": "https://wet-swimwear.com/",
+    "logo": "https://wet-swimwear.com/cdn/shop/files/Wet_Main_Logo-VECTOR_1f756b81-bd3d-4f6e-b2ec-118b05682061.jpg?v=1643429383&width=500",
+    "sameAs": [
+      "https://www.facebook.com/wetswim",
+      "https://www.instagram.com/wetswimwear/",
+      "https://www.pinterest.com/wet_swimwear/"
+    ],
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "telephone": "626-941-0388",
+        "contactType": "customer service",
+        "areaServed": "US",
+        "availableLanguage": "en"
+      }
+    ]
+  }
+  </script>
+  
+{% elsif template contains 'article' %}
+ <script type="application/ld+json">
+   {
+     "@context": "https://schema.org",
+     "@type": "BlogPosting",
+     "author": {
+       "@type": "Person",
+       "name": {{ article.author | json }}
+     },
+     "datePublished": {{ article.created_at | date: "%F" | json }},
+     "headline": {{ article.title | strip_html | escape | json }},
+     "image": {{ article.image | json }},
+     "publisher": {
+       "@type": "Organization",
+       "name": {{ shop.name | json }},
+       "url": {{ shop.url | json }}
+       {% if page_image %},
+       "logo": {
+         "@type": "ImageObject",
+         "url": {{ page_image | image_url: width: 600 | json }}
+       }
+       {% endif %}
+     },
+     "dateModified": {{ article.published_at | date: "%F" | json }},
+     "mainEntityOfPage": {{ article.url | json }}
+   }
+ </script>
+{% elsif template contains 'product' %}
+ <script type="application/ld+json">
+   {
+     "@context": "https://schema.org",
+     "@type": "Product",
+     "id": {{ product.handle | json }},
+     "url": {{ shop.url | append: product.url | json }},
+     "image": {{ product.featured_image | image_url: width: 1024 | json }},
+     "name": {{ product.title | strip_html | escape | json }},
+     "brand": {
+        "@type": "Brand",
+        "name": {{ product.vendor | json }}
+      },
+     "description": {{ product.description | strip_html | json }},
+     {%- if product.variants.first.sku != blank -%}
+       "sku": {{ product.variants.first.sku | json }},
+     {%- else -%}
+       "sku": {{ product.variants.first.id | json }},
+     {%- endif -%}
+     {%- if product.variants.first.barcode.size == 12 -%}
+       "gtin12": {{ product.variants.first.barcode }},
+     {%- endif -%}
+     {%- if product.variants.first.barcode.size == 13 -%}
+       "gtin13": {{ product.variants.first.barcode }},
+     {%- endif -%}
+     {%- if product.variants.first.barcode.size == 14 -%}
+       "gtin14": {{ product.variants.first.barcode }},
+     {%- endif -%}
+     "offers": [
+        {% for variant in product.variants %}
+        {
+           "@type": "Offer",
+           "price": {{ variant.price | money_without_currency | json }},
+           "priceCurrency": {{ cart.currency.iso_code | json }},
+           "availability": "http://schema.org/InStock",
+           "priceValidUntil": "2030-01-01",
+           "url": {{ product.url | json }}
+         }{% unless forloop.last %},{% endunless %}
+       {% endfor %}
+     ]
+    {%- if product.metafields.spr.reviews -%}
+    ,"aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": {{ product.metafields.spr.reviews | split: 'ratingValue" content="' | last | split: '"' | first | plus: 0 }},
+      "ratingCount": {{ product.metafields.spr.reviews | split: 'reviewCount" content="' | last | split: '"' | first | plus: 0 }}
+    }
+    {%- endif -%}
+   }
+ </script>
+{% endif %}

@@ -1,0 +1,402 @@
+{%- liquid
+
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'pb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'pt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'pt0 pb0'
+  endif
+
+  assign fixed_height = false
+  if section.settings.image_size == fixed
+    assign fixed_height = true
+  endif
+  assign text_align = section.settings.text_align
+  assign desktop_height = section.settings.desktop_image_height | append: 'px'
+  assign mobile_height = section.settings.mobile_image_height | append: 'px'
+
+  assign mobile_swipe = false
+  if section.settings.mobile_swipe
+    assign mobile_swipe = true
+  endif
+
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --desktop-section-height: {{ desktop_height }};
+    --mobile-section-height: {{ mobile_height }};
+  }
+  {% unless section.settings.color_scheme == 'none' %}
+    .global__editorial--column-{{ section.id }} {
+      background: var(--{{ section.settings.color_scheme }}-background) !important;
+    }
+    .global__editorial--column-{{ section.id }} .section-title:after {
+      background: var(--{{ section.settings.color_scheme }}-color) !important;
+    }
+    .global__editorial--column-{{ section.id }} .section-title h2,
+    .editorial--column-{{ block.id }} .text-content h3,
+    .editorial--column-{{ block.id }} .text-content p,
+    .editorial--column-{{ block.id }} .text-content .rte a {
+      color: var(--{{ section.settings.color_scheme }}-color);
+    }
+  {% endunless %}
+
+{% endstyle %}
+
+{% if mobile_swipe %}
+  {% if section.settings.enablearrow == true %}
+    {% capture slideshow_config %}{
+      "wrapAround":false,
+      "cellAlign": "center",
+      "dragThreshold":"15",
+      "contain": true,
+      "freeScroll": false,
+      "prevNextButtons": true,
+      "pageDots": false,
+      "watchCSS": true,
+      "cellSelector": ".editorial--column"
+    }{% endcapture %}
+  {% else %}
+  {% capture slideshow_config %}{
+    "wrapAround":false,
+    "cellAlign": "center",
+    "dragThreshold":"15",
+    "contain": true,
+    "freeScroll": false,
+    "prevNextButtons": false,
+    "pageDots": true,
+    "watchCSS": true,
+    "cellSelector": ".editorial--column"
+  }{% endcapture %}
+  {% endif %}
+{% endif %}
+
+<section class="global__editorial--column-{{ section.id }} global__section global__section--padding {{ section_padding }}"
+  data-section-id="{{ section.id }}"
+  {% if mobile_swipe %}
+  data-section-type="carousel-section"
+  {% endif %}
+  data-aos="{{ settings.scroll_animation }}">
+
+  {% if section.settings.full_width %}<div class="gridlock-fluid"><div class="row">{% endif %}
+
+  {% if section.settings.title != blank %}
+    <div class="section-title row">
+      <h2>{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  <article class="row grid__wrapper px0 editorial__block-container{% if mobile_swipe %} flickity-section js-carousel{% endif %}"{% if mobile_swipe %} data-flickity='{{ slideshow_config }}'{% endif %}>
+    {% for block in section.blocks %}
+      {%- liquid
+
+        assign push_class = ''
+
+        case section.blocks.size
+          when 1
+            assign image_width = 'span-6'
+            assign push_class = 'push-3'
+            assign md_render = 'calc(100vw * 0.75)'
+            assign lg_render = 'calc(1600px * 0.75)'
+          when 2
+            assign image_width = 'span-5 md-span-6'
+            assign push_class = 'push-1'
+            assign md_render = 'calc(100vw * 0.75)'
+            assign lg_render = 'calc(1600px * 0.75)'
+          when 3
+            assign image_width = 'span-4 md-span-6'
+            assign md_render = 'calc(100vw / 3)'
+            assign lg_render = 'calc(1600px / 3)'
+          when 4
+            assign image_width = 'span-3 md-span-6'
+            assign md_render = 'calc(100vw / 4)'
+            assign lg_render = 'calc(1600px / 4)'
+        endcase
+
+        assign wrap_image_with_link = false
+        assign show_button = false
+
+        if block.settings.button == blank and block.settings.link != blank
+          assign wrap_image_with_link = true
+        endif
+
+        if block.settings.button != blank and block.settings.link != blank
+          assign show_button = true
+        endif
+
+      -%}
+      <div class="editorial--column{% if forloop.first %} {{ push_class }}{% endif %} {{ image_width }} sm-span-12 auto editorial--column-{{ block.id }}" {{ block.shopify_attributes }}>
+        <div class="editorial--column__content size--{{ section.settings.image_size }}">
+          {% if block.settings.image != blank %}
+            {% if wrap_image_with_link %}
+              <a href="{{ block.settings.link }}">
+            {% endif %}
+
+              {% render 'basic-responsive-image',
+                type: block.settings.image,
+                sm_render: '300px',
+                md_render: md_render,
+                lg_render: lg_render,
+                width: 800
+              %}
+
+            {% if wrap_image_with_link %}
+              </a>
+            {% endif %}
+          {% endif %}
+
+
+          <div class="editorial__caption a-{{ text_align }}">
+
+            {% if block.settings.heading != blank %}
+              {% if block.settings.h2check == true %}
+                <h2 class="text-title">
+                  {{ block.settings.heading | escape }}
+                </h2><!-- /.text-title -->
+              {% else %}
+                <h3 class="text-title">
+                  {{ block.settings.heading | escape }}
+                </h3><!-- /.text-title -->
+              {% endif %}
+            {% endif %}
+
+            {% if block.settings.rich_text != blank %}
+              <div class="rte">
+                {{ block.settings.rich_text }}
+              </div><!-- /.rte -->
+            {% endif %}
+
+            {% if show_button %}
+            <span class="cta">
+              <a href="{{ block.settings.link }}">{{ block.settings.button | escape }}</a>
+            </span><!-- /.cta -->
+            {% endif %}
+
+          </div><!-- /.text-container -->
+        </div><!-- /.image-container -->
+      </div><!-- /.editorial--column -->
+    {% endfor %}
+
+    {% if section.blocks.size == 0 %}
+      {% render 'no-blocks' %}
+    {% endif %}
+
+  </article>
+  {% if section.settings.full_width %}</div></div>{% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Editorial columns",
+  "max_blocks": 12,
+  "settings":
+  [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Welcome"
+    },
+    {
+      "type": "radio",
+      "id": "image_size",
+      "label": "Image size",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "fixed",
+          "label": "Fixed height"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_height",
+      "min": 100,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Fixed image height (desktop)",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_height",
+      "min": 100,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Fixed image height (mobile)",
+      "default": 400
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_swipe",
+      "label": "Swipe on mobile",
+      "default":true
+    },
+    {
+      "type": "checkbox",
+      "id": "enablearrow",
+      "label": "Enable Arrow?"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "default": "left",
+      "options":
+      [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "cs1",
+          "label": "1"
+        },
+        {
+          "value": "cs2",
+          "label": "2"
+        },
+        {
+          "value": "cs3",
+          "label": "3"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both"
+    }
+  ],
+  "blocks":
+  [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings":
+      [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "800px x 600px recommended if 3 per row"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Our collections"
+        },
+        {
+          "type": "checkbox",
+          "id": "h2check",
+          "label": "Is this H2?"
+        },
+        {
+          "type": "richtext",
+          "id": "rich_text",
+          "label": "Text",
+          "default": "<p>Add a paragraph of text content whch can be accompanied by an optional image.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button",
+          "label": "Button text",
+          "info": "Visible only if a link is chosen",
+          "default": "Explore"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Required in order to display a button. Will link the image if no button text."
+        }
+      ]
+    }
+  ],
+  "presets":
+  [
+    {
+      "name": "Editorial columns",
+      "blocks":
+      [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ],
+  "templates":
+  [
+    "404",
+    "article",
+    "blog",
+    "cart",
+    "collection",
+    "list-collections",
+    "index",
+    "page",
+    "product",
+    "search"
+  ]
+}
+{% endschema %}

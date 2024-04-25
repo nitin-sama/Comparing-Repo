@@ -1,0 +1,156 @@
+{% liquid
+
+  assign is_five_column = false
+
+  case section.settings.grid
+    when 2
+      assign grid_item_width = 'span-6 md-span-4'
+    when 3
+      assign grid_item_width = 'span-4 md-span-4'
+    when 4
+      assign grid_item_width = 'span-3 md-span-3'
+    when 5
+      assign grid_item_width = 'span-one-fifth md-span-4'
+      assign is_five_column = true
+    when 6
+      assign grid_item_width = 'span-2 md-span-4 auto'
+  endcase
+
+  case section.settings.mobile_grid
+    when '1'
+      assign mobile_grid = 'sm-span-12'
+    when '2'
+      assign mobile_grid = 'sm-span-6'
+  endcase
+
+  assign title_bold = false
+  if section.settings.title_bold
+    assign title_bold = true
+  endif
+
+  assign title_floating = false
+  if section.settings.title_appearance == 'title_floating'
+    assign title_floating = true
+  endif
+
+  assign overlay_opacity = section.settings.overlay_opacity | plus: 0 | divided_by: 100.0
+
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} {
+  --section-text-color:  {{ section.settings.title_floating_color }};
+  --section-overlay-color: {{ section.settings.overlay_color | color_modify: 'alpha', overlay_opacity }};
+}
+{% endstyle %}
+
+
+<section
+    data-section-id="{{ section.id }}"
+    class="collection-list-template cl-{{ section.id }} main__section">
+
+    {% if section.settings.full_width %}<div class="gridlock-fluid">{% endif %}
+
+      {% paginate collections by 50 %}
+
+        <div class="collection__list-container row grid__wrapper px0{% if is_five_column %} gtc5{% endif %}">
+          {% for collection in collections %}
+            <div class="collection__grid--item{% if title_floating %} title--floating{% endif %} {{ grid_item_width }} {{ mobile_grid }} auto" data-alpha="{{ collection.title }}">
+              {% render 'collection-grid-item', collection: collection, title_bold: title_bold %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="grid__wrapper px0 row">
+          {% render 'pagination', paginate: paginate %}
+        </div>
+      {% endpaginate %}
+
+    {% if section.settings.full_width %}</div>{% endif %}
+
+</section>
+
+
+{% schema %}
+{
+  "name": "All collections",
+  "settings":
+  [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width"
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Collections per row desktop",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "mobile_grid",
+      "options":
+      [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "label": "Collections per row mobile",
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "title_appearance",
+      "options":
+      [
+        {
+          "value": "title_floating",
+          "label": "Title floating"
+        },
+        {
+          "value": "title_below",
+          "label": "Title below"
+        }
+      ],
+      "label": "Title appearance",
+      "default": "title_below"
+    },
+    {
+      "type":"color",
+      "id":"title_floating_color",
+      "label":"Floating title color",
+      "default":"#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Image overlay color (floating titles)",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Image overlay opacity (floating titles)",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "title_bold",
+      "label": "Bold collection titles"
+    }
+  ]
+}
+{% endschema %}

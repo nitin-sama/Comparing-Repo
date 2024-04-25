@@ -1,0 +1,280 @@
+{%- liquid
+
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'pb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'pt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'pt0 pb0'
+  endif
+
+  assign text_align = section.settings.text_alignment
+
+-%}
+
+{% style %}
+  {% if section.blocks.size > 0 %}
+    {% for block in section.blocks %}
+      .rte-tab.rte-tab--{{ section.id }} #tab--{{section.id}}--{{forloop.index}}:checked ~ section .tab--{{section.id}}--{{forloop.index}}{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    {
+      display: block;
+    }
+    {% for block in section.blocks %}
+      .rte-tab.rte-tab--{{ section.id }} #tab--{{section.id}}--{{forloop.index}}:checked ~ nav .tab--{{section.id}}--{{forloop.index}} label{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    {
+      position: relative;
+    }
+    {% for block in section.blocks %}
+      .rte-tab.rte-tab--{{ section.id }} #tab--{{section.id}}--{{forloop.index}}:checked ~ nav .tab--{{section.id}}--{{forloop.index}} label:before{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    {
+      -webkit-transform: scaleX(1);
+      -ms-transform: scaleX(1);
+      transform: scaleX(1);
+      -webkit-transform-origin: bottom left;
+      -ms-transform-origin: bottom left;
+      transform-origin: bottom left;
+    }
+    {% for block in section.blocks %}
+      .rte-tab.rte-tab--{{ section.id }} #tab--{{section.id}}--{{forloop.index}}:checked ~ nav .tab--{{section.id}}--{{forloop.index}} label:after{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    {
+      content: "";
+      display: block;
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      left: 0;
+      bottom: -1px;
+    }
+    section.section-tabs-{{ section.id }} .rte-tab ul li label:hover {
+      background: transparent;
+    }
+  {% else %}
+    /*No blocks in section*/
+  {% endif %}
+  {% if section.settings.color_scheme == 'none' %}
+      section.section-tabs-{{ section.id }},
+      section.section-tabs-{{ section.id }} .rte-tab section div.tabbed-block,
+      section.section-tabs-{{ section.id }} .rte-tab ul.tabbed li label {
+        background: var(--background);
+      }
+      section.section-tabs-{{ section.id }} .rte,
+      section.section-tabs-{{ section.id }} h1,
+      section.section-tabs-{{ section.id }} h2,
+      section.section-tabs-{{ section.id }} h3,
+      section.section-tabs-{{ section.id }} h4,
+      section.section-tabs-{{ section.id }} h5,
+      section.section-tabs-{{ section.id }} h6,
+      section.section-tabs-{{ section.id }} a,
+      section.section-tabs-{{ section.id }} p,
+      section.section-tabs-{{ section.id }} li,
+      section.section-tabs-{{ section.id }} .rte-tab ul.tabbed li label  {
+        color: var(--text-color);
+      }
+      section.section-tabs-{{ section.id }} .section-title:after,
+      section.section-tabs-{{ section.id }} .rte-tab ul.tabbed li label:before {
+        background: var(--text-color);
+      }
+  {% else %}
+      section.section-tabs-{{ section.id }},
+      section.section-tabs-{{ section.id }} .rte-tab section div.tabbed-block,
+      section.section-tabs-{{ section.id }} .rte-tab ul.tabbed li label {
+        background: var(--{{ section.settings.color_scheme }}-background) !important;
+      }
+      section.section-tabs-{{ section.id }} .rte,
+      section.section-tabs-{{ section.id }} h1,
+      section.section-tabs-{{ section.id }} h2,
+      section.section-tabs-{{ section.id }} h3,
+      section.section-tabs-{{ section.id }} h4,
+      section.section-tabs-{{ section.id }} h5,
+      section.section-tabs-{{ section.id }} h6,
+      section.section-tabs-{{ section.id }} a,
+      section.section-tabs-{{ section.id }} p,
+      section.section-tabs-{{ section.id }} li,
+      section.section-tabs-{{ section.id }} .rte-tab ul.tabbed li label  {
+        color: var(--{{ section.settings.color_scheme }}-color) !important;
+      }
+      section.section-tabs-{{ section.id }} .section-title:after,
+      section.section-tabs-{{ section.id }} .rte-tab ul.tabbed li label:before {
+        background: var(--{{ section.settings.color_scheme }}-color) !important;
+      }
+    {% endif %}
+{% endstyle %}
+
+<section
+  id="section-tabs--{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  class="section-tabs section-tabs-{{ section.id }} global__section global__section--padding {{ section_padding }}"
+  data-aos="{{ settings.scroll_animation }}">
+
+    {% if section.settings.heading != blank %}
+      <div class="section-title row">
+        <h2>{{ section.settings.heading | escape }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="tabbed__section-container grid__wrapper px0 row">
+      <div class="rte-tab rte-tab--{{ section.id }} span-12 auto">
+        {%- for block in section.blocks -%}
+          <input id="tab--{{ section.id }}--{{ forloop.index }}" type="radio" name="pct--{{ section.id }}" {% if forloop.first %}checked="checked"{% endif %} />
+        {%- endfor -%}
+        <nav>
+          <ul class="tabbed">
+            {% for block in section.blocks %}
+              <li class="tab--{{section.id}}--{{ forloop.index }}">
+                <label for="tab--{{ section.id }}--{{ forloop.index }}" class="px0">
+                  {% if block.type == 'product_description' %}
+                    {{ 'products.product.details' | t }}
+                  {% else %}
+                    {{ block.settings.tab_heading }}
+                  {% endif %}
+                </label>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+        <section>
+          {% for block in section.blocks %}
+            <div class="tab tab--{{ section.id }}--{{ forloop.index }} tabbed-block rte a-{{ text_align }}">
+              {% if block.settings.page != blank %}
+                {{ block.settings.page.content }}
+              {% else %}
+                {{ block.settings.richtext }}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </section>
+      </div>
+    </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Tabbed content",
+  "settings":
+  [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Information"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "cs1",
+          "label": "1"
+        },
+        {
+          "value": "cs2",
+          "label": "2"
+        },
+        {
+          "value": "cs3",
+          "label": "3"
+        }
+      ],
+      "default": "none"
+    }
+  ],
+  "blocks":
+  [
+    {
+      "type": "tab_content",
+      "name": "Tab content",
+      "limit": 5,
+      "settings":
+      [
+        {
+          "type": "text",
+          "id": "tab_heading",
+          "label": "Tab heading",
+          "default":"Tab heading"
+        },
+        {
+          "type": "richtext",
+          "id": "richtext",
+          "label": "Rich text content",
+          "default":"<p>Add a paragraph of text content to a tabbed area, show content from an existing page<br /> or add metafield content for unique tabs per product</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page content",
+          "info":"Choose content from an existing page"
+        }
+      ]
+    }
+  ],
+  "presets":
+  [
+    {
+      "name": "Tabbed content",
+      "blocks":
+      [
+        {
+          "type": "tab_content"
+        },
+        {
+          "type": "tab_content"
+        },
+        {
+          "type": "tab_content"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

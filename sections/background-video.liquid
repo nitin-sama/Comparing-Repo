@@ -1,0 +1,266 @@
+{%- liquid
+
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'mb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'mt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'mt0 mb0'
+  endif
+
+  assign has_youtube_video = false
+  if section.settings.video_url.type == "youtube"
+    assign video_type = 'youtube'
+    assign has_youtube_video = true
+  endif
+
+  assign has_mp4_video = false
+  if section.settings.mp4_url
+    assign has_mp4_video = true
+  endif
+
+  if has_youtube_video and has_mp4_video
+    assign has_youtube_video = false
+  endif
+
+  assign show_caption = false
+  if section.settings.title != blank or section.settings.subheading_text != blank or has_youtube_video
+   assign show_caption = true
+  endif
+
+  assign show_button_only = false
+  if section.settings.title == blank and section.settings.subheading_text == blank and has_youtube_video
+    assign show_button_only = true
+  endif
+
+  assign desktop_height = section.settings.video_height
+  assign mobile_height = section.settings.video_height_mobile
+  assign opacity = section.settings.overlay_opacity | plus: 0 | divided_by: 100.0
+
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --desktop-section-height: {{ desktop_height }}px;
+    --mobile-section-height: {{ mobile_height }}px;
+    --section-overlay-color: {{ section.settings.overlay_color | color_modify: 'alpha', opacity }};
+    --text-color: {{ section.settings.text_color }};
+  }
+
+  .background-video-{{ section.id }} .background-video__caption {
+    top: {{ section.settings.caption_vertical }}%;
+    left: {{ section.settings.caption_horizontal }}%;
+    -webkit-transform: translate(-{{ section.settings.caption_horizontal }}%, -{{ section.settings.caption_vertical }}%);
+    -ms-transform: translate(-{{ section.settings.caption_horizontal }}%, -{{ section.settings.caption_vertical }}%);
+    -moz-transform: translate(-{{ section.settings.caption_horizontal }}%, -{{ section.settings.caption_vertical }}%);
+    -o-transform: translate(-{{ section.settings.caption_horizontal }}%, -{{ section.settings.caption_vertical }}%);
+    transform: translate(-{{ section.settings.caption_horizontal }}%, -{{ section.settings.caption_vertical }}%);
+  }
+
+{% endstyle %}
+
+
+{%- capture video_config -%}{
+  "mp4": {{ section.settings.mp4_url | json }},
+  "poster": false,
+  "sectionId": {{ section.id | json }}
+}{%- endcapture -%}
+
+<section
+  class="global__background-video-{{ section.id }} section-background-video background-video-{{ section.id }} global__section global__section--margin {{ section_padding }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="background-video"
+  data-aos="{{ settings.scroll_animation }}"
+  data-video-config='{{ video_config }}'>
+  {% unless section.settings.full_width %}<div class="grid__wrapper">{% endunless %}
+    <div class="background-video__outer-wrapper js-bg-video-{{ section.id }} span-12">
+      {% if show_caption %}
+      <div class="background-video__caption {% if show_button_only %}tablet-hide desktop-hide{% endif %}">
+        {% if section.settings.title != blank %}
+          <h3 class="background-video__heading mb0">{{ section.settings.title | escape }}</h3>
+        {% endif %}
+        {% if section.settings.subheading_text != blank %}
+          {{ section.settings.subheading_text }}
+        {% endif %}
+        {% if section.settings.link and section.settings.button_text != blank %}
+        <div class="video__btn-wrapper">
+          <a href="{{ section.settings.link }}">
+            {{ section.settings.button_text  | escape }}
+          </a>
+        </div>
+        {% endif %}
+
+        {% comment %}
+        {% if has_youtube_video and section.settings.mp4_url == blank %}
+          <button class="section-gallery__play-button js-play-video btn-as-link table-hide desktop-hide" type="button" name="button" data-video-trigger="video-{{ section.id }}" data-video-type="{{ video_type }}">
+            {% render 'snip-icons',
+               wrapper: '.section-gallery__item-inner',
+               type: 'media-icons',
+               icon: 'play',
+               size: '44px',
+               classes: 'no-pe m0 mt3',
+               fill: 'var(--text-color)',
+               hover: 'var(--text-color)' %}
+          </button>
+        {% endif %}
+        {% endcomment %}
+
+      </div>
+      {% endif %}
+      {%- if section.settings.fallback_image -%}
+        <div class="background-video__placeholder-image">
+          {%
+            render 'basic-responsive-image',
+            type: section.settings.fallback_image,
+            width: 3000
+           %}
+        </div>
+      {%- endif -%}
+      {%- if section.settings.video_url.type == "youtube" -%}
+        <div class="alternative-iframe--wrapper">
+          <div id="js-alternative-yt-{{ section.id }}" class="alternative-iframe--youtube js-has-yt" data-id="{{ section.settings.video_url.id }}"></div>
+        </div>
+      {%- endif -%}
+    </div>
+  {% unless section.settings.full_width %}</div>{% endunless %}
+</section>
+{% schema %}
+{
+  "name":"Background video",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Enable full width",
+      "default": true
+    },
+    {
+      "type":"url",
+      "id":"mp4_url",
+      "label":"MP4 url"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+      "label": "or YouTube",
+      "accept": ["youtube"]
+    },
+    {
+      "type": "range",
+      "id": "video_height",
+      "min": 200,
+      "max": 900,
+      "step": 100,
+      "unit": "px",
+      "label": "Section height",
+      "default": 600
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Fallback image"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Caption"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Background Video"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading_text",
+      "label": "Subheading",
+      "default": "<p>Use overlay text to give your customers insight into your brand. Select imagery and text that relates to your style and story.</p>"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Button"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type":      "range",
+      "id":        "caption_horizontal",
+      "min":       0,
+      "max":       100,
+      "step":      1,
+      "unit":      "%",
+      "label":     "Caption horizontal position",
+      "default":   50
+    },
+    {
+      "type":      "range",
+      "id":        "caption_vertical",
+      "min":       0,
+      "max":       100,
+      "step":      1,
+      "unit":      "%",
+      "label":     "Caption vertical position",
+      "default":   50
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both"
+    }
+  ],
+  "presets": [
+   {
+      "name": "Background video"
+    }
+  ],
+  "templates": ["404", "article", "blog", "cart", "collection", "list-collections", "index", "page", "product", "search"]
+}
+{% endschema %}

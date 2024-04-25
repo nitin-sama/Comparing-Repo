@@ -1,0 +1,425 @@
+{%- liquid
+
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'pb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'pt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'pt0 pb0'
+  endif
+
+  assign full_width = false
+  if section.settings.full_width
+    assign full_width = true
+  endif
+
+  assign section_color = false
+  if section.settings.apply_color_to_section
+    assign section_color = true
+  endif
+
+  assign text_position = section.settings.text_position
+  assign text_align = section.settings.text_align
+  assign text_offset = section.settings.text_offset
+
+  assign image_height = section.settings.image_height
+
+  assign desktop_height = section.settings.desktop_height
+  assign mobile_height = section.settings.mobile_height
+
+-%}
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --font-size:  {{ section.settings.text_size }}px;
+    --h2-size:  {{ section.settings.heading_size }}px;
+    --desktop-section-height: {{ desktop_height }}px;
+    --mobile-section-height: {{ mobile_height }}px;
+  }
+  @media (max-width: 740px) {
+     #shopify-section-{{ section.id }} {
+       --font-size: calc({{ section.settings.text_size }}px - ({{ section.settings.text_size }}px * 0.15));
+       --h2-size: calc({{ section.settings.heading_size }}px - ({{ section.settings.heading_size }}px * 0.15));
+     }
+   }
+  {% unless section.settings.color_scheme == 'none' %}
+    {% if section_color %}
+      .image__with-text.section-{{ section.id }} {
+        background: var(--{{ section.settings.color_scheme }}-background) !important;
+      }
+    {% endif %}
+    .image__with-text.section-{{ section.id }} .text__section {
+      background: var(--{{ section.settings.color_scheme }}-background) !important;
+    }
+    .image__with-text.section-{{ section.id }} h2.text-title,
+    .image__with-text.section-{{ section.id }} .rte,
+    .image__with-text.section-{{ section.id }} .rte p,
+    .image__with-text.section-{{ section.id }} .rte a {
+      color: var(--{{ section.settings.color_scheme }}-color) !important;
+    }
+  {% endunless %}
+  @media screen and (min-width: 741px) {
+    .image__with-text.section-{{ section.id }} .text__section {
+      {% if section.settings.layout == 'left' %}
+        transform: translateX(-{{ text_offset }}%);
+        width: calc(100% - 6rem);
+        margin-left: 1rem;
+      {% else %}
+        transform: translateX({{ text_offset }}%);
+        width: calc(100% - 6rem);
+        margin-right: 1rem;
+      {% endif %}
+    }
+  }
+{% endstyle %}
+<section class="image__with-text section-{{ section.id }} global__section global__section--padding {{ section_padding }}"
+data-section-id="{{ section.id }}"
+data-aos="{{ settings.scroll_animation }}">
+  {% if full_width %}<div class="gridlock-fluid"><div class="row">{% endif %}
+
+        {%- liquid
+
+          case section.settings.image_width
+            when '33%'
+              assign image_width = 'span-4'
+              assign image_offset = 'span-8'
+              assign md_render = 'calc(100vw / 3)'
+              assign lg_render = 'calc(1600px / 3)'
+            when '50%'
+              assign image_width = 'span-6'
+              assign image_offset = 'span-6'
+              assign md_render = 'calc(100vw / 2)'
+              assign lg_render = 'calc(1600px / 2)'
+            when '66%'
+              assign image_width = 'span-8'
+              assign image_offset = 'span-4'
+              assign md_render = 'calc(100vw * 0.6667)'
+              assign lg_render = 'calc(1600px * 0.6667)'
+          endcase
+
+        -%}
+
+        {% capture image_layout %}
+          <div class="{{ image_width }} sm-span-12 auto image__section {% if section.settings.layout == 'right' %}image-right{% endif %} size--{{ image_height }}">
+            {% if section.settings.image != blank %}
+              {% render 'basic-responsive-image',
+                type: section.settings.image,
+                sm_render: '300px',
+                md_render: md_render,
+                lg_render: lg_render,
+                width: 1200
+              %}
+            {% else %}
+              <div class="onboard">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {% endif %}
+          </div>
+        {% endcapture %}
+
+        <div class="row image-with-text-wrapper grid__wrapper {{ text_position }} pl0 pr0 cg0 rg0{% if full_width %} edge{% endif %}">
+          {% if section.settings.layout == 'left' %}
+            {{ image_layout }}
+          {% endif %}
+
+          <div class="{{ image_offset }} sm-span-12 auto {% unless section.settings.full_width %}contained{% endunless %} text__section {{ text_align }} m-center">
+            {% if section.settings.title != blank %}
+              <h2 class="text-title">
+                {{ section.settings.title | escape }}
+              </h2>
+            {% endif %}
+            {% if section.settings.text != blank %}
+              <div class="rte">
+                {{ section.settings.text }}
+              </div>
+            {% endif %}
+            {% if section.settings.button != blank and section.settings.link != blank %}
+              <div class="cta">
+                <a href="{{ section.settings.link }}">
+                  {{ section.settings.button | escape }}
+                </a>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if section.settings.layout == 'right' %}
+            {{ image_layout }}
+          {% endif %}
+        </div>
+
+  {% if full_width %}</div></div>{% endif %}
+</section>
+
+{% schema %}
+  {
+  "name": "Image with text",
+  "settings":
+  [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "1200px x 800px recommended"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Position",
+      "default": "left",
+      "options":
+      [
+        {
+          "value": "left",
+          "label": "Image on left"
+        },
+        {
+          "value": "right",
+          "label": "Image on right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_width",
+      "label": "Width",
+      "default": "50%",
+      "options":
+      [
+        {
+          "value": "33%",
+          "label": "33%"
+        },
+        {
+          "value": "50%",
+          "label": "50%"
+        },
+        {
+          "value": "66%",
+          "label": "66%"
+        }
+      ]
+    },
+    {
+      "type": "radio",
+      "id": "image_height",
+      "label": "Image size",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "fixed_height",
+          "label": "Fixed height"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 200,
+      "max": 1000,
+      "step": 100,
+      "unit": "px",
+      "label": "Fixed image height (desktop)",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 200,
+      "max": 1000,
+      "step": 100,
+      "unit": "px",
+      "label": "Fixed image height (mobile)",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Image with text"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Pair text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "label": "Button text"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "default": "a-left",
+      "info":"Center aligns below image on mobile",
+      "options":
+      [
+        {
+          "value": "a-left",
+          "label": "Left"
+        },
+        {
+          "value": "a-center",
+          "label": "Center"
+        },
+        {
+          "value": "a-right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "default": "vai-center",
+      "options":
+      [
+        {
+          "value": "vai-start",
+          "label": "Top"
+        },
+        {
+          "value": "vai-center",
+          "label": "Center"
+        },
+        {
+          "value": "vai-end",
+          "label": "Bottom"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 13,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 13,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_offset",
+      "min": 0,
+      "max": 35,
+      "step": 1,
+      "unit": "%",
+      "label": "Text offset",
+      "info":"Offset text content to overlay a large image",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "cs1",
+          "label": "1"
+        },
+        {
+          "value": "cs2",
+          "label": "2"
+        },
+        {
+          "value": "cs3",
+          "label": "3"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type":"checkbox",
+      "id":"apply_color_to_section",
+      "label":"Apply color scheme background to section",
+      "default":false
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both"
+    }
+  ],
+  "presets":
+  [
+    {
+      "name": "Image with text"
+    }
+  ],
+  "templates":
+  [
+    "404",
+    "article",
+    "blog",
+    "cart",
+    "collection",
+    "list-collections",
+    "index",
+    "page",
+    "product",
+    "search"
+  ]
+}
+{% endschema %}

@@ -1,595 +1,212 @@
-{%- if section.settings.enable_announcement and section.blocks.size > 0 -%}
-    {%-liquid
-        assign arrow =  section.settings.arrow_active
-        assign hasCountDown = section.blocks | where: 'type', 'countdown'
-        assign hasCountDown = hasCountDown[0]
-        assign timeScroll = 5 | times: section.blocks.size
-    -%}
+{%- liquid
 
-    <style type="text/css">
-        .announcement-bar {
-            padding-top: {{ section.settings.padding_top }}px;
-            padding-bottom: {{ section.settings.padding_bottom }}px;
-            {% if section.settings.bg_image_announcement != blank %}
-                background-image: url({{ section.settings.bg_image_announcement | img_url: '2048x'}});
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: cover;
-            {% else %}
-                background: {% if section.settings.bg_color_text_gradient != blank %}{{ section.settings.bg_color_text_gradient }}{% else %}{{ section.settings.bg_color_text }}{% endif %};
-            {% endif %}
-        }
+  assign hd_locale_selector = false
+  assign hd_country_selector = false
+  assign show_cart_links = false
+  assign announcement_cart = false
 
-        .banner-animation-1 .announcement-bar {
-            transition: opacity 250ms ease-in;
-        }
+  assign ab_is_empty = true
 
-        @keyframes SlideLeft {
-            0% {
-                transform: translate3d(0,0,0);
-            }
+  if section.settings.show_country_selector and localization.available_countries.size > 1
+    assign hd_country_selector = true
+    assign ab_is_empty = false
+  endif
 
-            100% {
-                transform: translate3d(-100%,0,0);
-            }
-        }
+  if section.settings.show_locale_selector and shop.published_locales.size > 1
+    assign hd_locale_selector = true
+    assign ab_is_empty = false
+  endif
 
-        .announcement-bar .layout--scroll {
-            max-width: 100%;
-            padding-left: 0;
-            padding-right: 0;
-            overflow: hidden;
-            text-align: right;
-        }
+  if section.settings.announcement_cart
+    assign announcement_cart = true
+    assign show_cart_links = true
+    assign ab_is_empty = false
+  endif
 
-        .header-full-width #shopify-section-announcement-bar .announcement-bar .layout--scroll {
-            padding-left: 0;
-            padding-right: 0;
-        }
+  if section.settings.announcement_text != blank
+    assign ab_is_empty = false
+  endif
 
-        .announcement-bar .layout--scroll .row {
-            display: inline-block;
-            text-align: left;
-            white-space: nowrap;
-        }
+  if section.settings.top_nav != blank
+    assign ab_is_empty = false
+  endif
 
-        .announcement-bar__item-scroll {
-            display: inline-block;
-            animation: SlideLeft {{ timeScroll }}s infinite linear;
-        }
+-%}
 
-        .announcement-bar .layout--scroll:hover .announcement-bar__item-scroll,
-        .announcement-bar .layout--scroll:focus .announcement-bar__item-scroll {
-            animation-play-state: paused;
-        }
+<section class="announcement__bar-section topbar gridlock-fluid js-top-bar{% if ab_is_empty %} p0{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="announcement-bar-section">
 
-        .announcement-bar .layout--scroll .announcement-bar__message {
-            width: auto;
-            vertical-align: middle;
-        }
+  <div class="row">
 
-        .announcement-bar .layout--scroll .announcement-bar__message .message, .announcement-bar .layout--scroll .announcement-bar__message p {
-            padding: 5px 12.5px;
-        }
+    {% if section.settings.top_nav != blank %}
+      <ul class="announcement__bar-nav desktop-3 tablet-6 mobile-hide">
+        {% for link in linklists[section.settings.top_nav].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
 
-        .announcement-bar .announcement-bar__message svg {
-            display: inline-block;
-            vertical-align: middle;
-            width: 16px;
-            height: 16px;
-        }
-
-        .announcement-bar .layout--scroll .announcement-bar__message .underline {
-            text-decoration: underline;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 4px;
-        }
-
-        .announcement-bar__message, .announcement-bar__message .message, .announcement-bar__message a, .announcement-bar__message p, .top-mesage-countdown {
-            color: {{ section.settings.color_text }};
-            font-size: {{ section.settings.font_size_text | append: 'px' }};
-            font-style: {{ section.settings.font_style_text }};
-            font-weight: {{ section.settings.font_weight_text }};
-            {% unless section.settings.enable_close %}
-                letter-spacing: 0;
-            {% endunless %}
-        }
-
-        .announcement-bar .announcement-close.hasCountDown {
-            width: 21px;
-            height: 21px;
-        }
-
-        .announcement-bar .announcement-close svg {
-            fill: {{ section.settings.color_text }};
-        }
-
-        .announcement-bar .announcement-countdown .clock-item{
-            color: var(--countdown-text-color);
-            border: 1px solid var(--countdown-text-border);
-            background-color: var(--countdown-text-background);
-        }
-
-        .announcement-bar .announcement-countdown .clock-item:before{
-            color: {{ section.settings.color_text }};
-        }
-
-        {% if arrow == true %}
-            .announcement-bar .layout--slider .row{
-                max-width: 38%;
-                margin: 0 auto;
-            }
-
-            .announcement-bar .slick-arrow svg{
-                fill: {{ section.settings.color_text }};
-                color: {{ section.settings.color_text }};
-            }
+      <div class="{% if section.settings.top_nav == blank %}desktop-push-3{% endif %} desktop-6 tablet-6 mobile-3" id="banner-message">
+        {% if section.settings.announcement_text != blank %}
+          <div class="rte">
+            {{ section.settings.announcement_text }}
+          </div><!-- /.rte -->
         {% endif %}
+      </div>
 
-        .announcement-bar .layout--slider .announcement-bar__message{
-            display: none;
-        }
+      <ul class="announcement__cart shopping__cart-links desktop-3 tablet-3 mobile-hide right">
+        {% render 'shopping-cart-links',
+          cart: cart,
+          show_cart_links: show_cart_links,
+          hd_locale_selector: hd_locale_selector,
+          hd_country_selector: hd_country_selector,
+          fill_color: 'var(--announcement-bar-text-color)',
+          wrapper: '.announcement__cart' %}
+      </ul>
 
-        .announcement-bar .layout--slider .announcement-bar__message:first-child{
-            display: inline-block;
-        }
+  </div>
 
-        .announcement-bar .slick-slider .announcement-bar__message{
-            display: inline-block;
-        }
+</section>
 
-        @media (max-width: 1400px){
-            {% if arrow == true %}
-                .announcement-bar .layout--slider .row{
-                    max-width: 50%;
-                }
-            {% endif %}
-        }
+{% style %}
 
-        @media (max-width: 1199px){
-            {% if arrow == true %}
-                .announcement-bar .layout--slider .row{
-                    max-width: 90%;
-                }
-            {% endif %}
-        }
+  .announcement__bar-section {
+    --topbar-font-size: {{ section.settings.announcement_text_size }}px;
+    --topbar-text-color: {{ settings.announcement_bar_text_color }};
+    --topbar-text-color-light: {{ settings.announcement_bar_text_color | color_lighten: 30 }};
+    --topbar-background-color: {{ settings.announcement_bar_background }};
+    --topbar-font-family:  var(--main-family);
+  }
 
-        @media (max-width: 1024px){
-            .announcement-bar .announcement-countdown+.announcement-close{
-                top: 20%;
-            }
+  .announcement__bar-section {
+    font-size: {{ section.settings.announcement_text_size }}px;
+    font-size: var( --topbar-font-size, {{ section.settings.announcement_text_size }}px);
+    text-align: center !important;
+  }
+  .announcement__bar-section,
+  .announcement__bar-section a {
+    color: {{ settings.announcement_bar_text_color }};
+    color: var( --topbar-text-color, {{ settings.announcement_bar_text_color }});
+  }
 
-            .announcement-bar__message .message.font-size-mb {
-                font-size: calc({{ section.settings.font_size_text | append: 'px' }} - 2px);
-            }
-        }
+  .announcement__bar-section .slideout__trigger--open button.button-as-link,
+  .announcement__bar-section ul.shopping__cart-links li a:hover,
+  .announcement__bar-section ul.announcement__bar-nav li a:hover,
+  .announcement__bar-section ul.shopping__cart-links li a:focus,
+  .announcement__bar-section ul.announcement__bar-nav li a:focus,
+  .announcement__bar-section .slideout__trigger-mobile-menu:hover,
+  .announcement__bar-section .slideout__trigger-mobile-menu:focus {
+    color: {{ settings.announcement_bar_text_color | color_lighten: 30 }};
+    color: var( --topbar-text-color-light, {{ settings.announcement_bar_text_color | color_lighten: 30 }});
+  }
+  .announcement__bar-section ul.shopping__cart-links li a {
+    font-size: {{ section.settings.announcement_text_size }}px;
+    font-size: var( --topbar-font-size, {{ section.settings.announcement_text_size }}px);
+  }
+  .announcement__bar-section .disclosure__toggle,
+  .announcement__bar-section .slideout__trigger--open button.button-as-link {
+    font-size: var( --topbar-font-size, {{ section.settings.announcement_text_size }}px) !important;
+    font-family: var(--main-family, {{ settings.main_font.family }}, {{ settings.main_font.fallback_families }}) !important;
+    color: {{ settings.announcement_bar_text_color }};
+    background-color: {{ settings.announcement_bar_background }};
+  }
+  .announcement__bar-section .my-cart-text,
+  .announcement__bar-section .js-cart-count {
+    font-size: var( --topbar-font-size, {{ section.settings.announcement_text_size }}px) !important;
+    font-family: var(--main-family, {{ settings.main_font.family }}, {{ settings.main_font.fallback_families }}) !important;
+  }
+  .announcement__bar-section p {
+    font-size: var( --topbar-font-size, {{ section.settings.announcement_text_size }}px) !important;
+  }
+  .announcement__bar-section .slideout__trigger--open button.button-as-link:hover,
+  .announcement__bar-section .slideout__trigger--open button.button-as-link: visited,
+  .announcement__bar-section .disclosure__toggle:hover {
+    color: {{ settings.announcement_bar_text_color | color_lighten: 30 }};
+  }
+  .announcement__bar-section .disclosure-list {
+     background-color: {{ settings.announcement_bar_background }};
+     border: 1px solid {{ settings.announcement_bar_text_color }};
+   }
+   .announcement__bar-section .disclosure-list__option {
+     color: {{ settings.announcement_bar_background }};
+     text-transform: capitalize;
+   }
+   .announcement__bar-section .disclosure-list__option:focus, .disclosure-list__option:hover {
+     color: {{ settings.announcement_bar_text_color }};
+     border-bottom: 1px solid {{ settings.announcement_bar_text_color }};
+   }
+   .announcement__bar-section .disclosure-list__item--current .disclosure-list__option {
+     color: {{ settings.announcement_bar_text_color }};
+     border-bottom: 1px solid {{ settings.announcement_bar_text_color }};
+   }
 
-        @media (max-width: 551px){
-            {% if section.settings.bg_image_announcement != blank %}
-            .announcement-bar{
-                background-position: inherit;
-            }
-            .announcement-bar .announcement-countdown+.announcement-close{
-                top: 18%;
-            }
-            {% endif %}
+   {% if announcement_cart %}
+    .header__shopping-cart { display: none; }
+   {% endif %}
 
-            {% if arrow == true %}
-                .announcement-bar .layout--slider .row{
-                    max-width: 100%;
-                }
+   aside#slideout-search-sidebar {
+    height: 166px;
+    overflow-y: hidden;
+  }
 
-                .announcement-bar .slick-arrow{
-                    display: none !important;
-                }
-            {% endif %}
-
-            .announcement-bar__message .message.font-size-mb {
-                font-size: calc({{ section.settings.font_size_text | append: 'px' }} - 4px);
-            }
-        }
-
-    </style>
-
-    <announcement-bar-component class="announcement-bar" role="region" aria-label="{{ 'sections.header.announcement' | t }}" style="opacity: 0; visibility: hidden; display: block;">
-        <script>
-            if (window.announcementClosed) {
-                document.querySelector('.announcement-bar').remove();
-            }
-        </script>
-        <div class="container layout--{{ section.settings.layout }}">
-            <div class="row{% if arrow == true %} has-arrows{% endif %}" {% if section.blocks.size > 1 and section.settings.layout == 'slider' %}data-announcement-bar data-arrows="{{arrow}}"{% endif %}>
-                {%- if section.settings.layout == 'scroll' -%}
-                    {%- liquid
-                        if section.blocks.size <= 10
-                            assign limitItems = 13 | minus: section.blocks.size
-                        else
-                            assign limitItems = 2
-                        endif
-                    -%}
-                    {%- for i in (1..limitItems) -%}
-                        <div class="announcement-bar__item-scroll">
-                            {%- for block in section.blocks -%}
-                                {%- case block.type -%}
-                                    {%- when 'announcement' -%}
-                                        {%- if block.settings.text != blank -%}
-                                            <div class="announcement-bar__message text-center" id="{{block.id}}"  
-                                                    style="--button-color-style: {{ block.settings.btn_color }};
-                                                            --button-border-style: {{ block.settings.btn_border_color }};
-                                                            --button-background-style: {% if block.settings.btn_bg_color_gradient != blank %}{{ block.settings.btn_bg_color_gradient }}{% else %}{{ block.settings.btn_bg_color }}{% endif %}">
-                                                    {{ block.settings.text }}
-                                            </div>
-                                        {%- endif -%}
-                                    {%- when 'countdown' -%}
-                                        <div class="announcement-bar__message text-center" id="{{block.id}}"
-                                            style="--countdown-text-color: {{ block.settings.color_countdown_text }}; 
-                                            --countdown-text-background: {{ block.settings.bg_color_countdown }}; 
-                                            --countdown-text-border: {{ block.settings.border_color_countdown }}"
-                                        >
-                                            {% if block.settings.top_message_text != blank %}
-                                                <div class="top-mesage-countdown">{{ block.settings.top_message_text }}</div>
-                                            {% endif %}
-                                            {% if block.settings.annou_countdown != blank %}
-                                                <div class="announcement-countdown countdown-block" data-countdown-announcement data-countdown-value="{{ block.settings.annou_countdown }}"></div>
-                                            {% endif %}
-                                        </div>
-                                {%- endcase -%}
-                            {%- endfor -%}
-                        </div>
-                    {%- endfor -%}
-                {%- else -%}
-                    {%- for block in section.blocks -%}
-                        {%- case block.type -%}
-                            {%- when 'announcement' -%}
-                                {%- if block.settings.text != blank -%}
-                                    <div class="announcement-bar__message text-center" id="{{block.id}}"  
-                                            style="--button-color-style: {{ block.settings.btn_color }};
-                                                    --button-border-style: {{ block.settings.btn_border_color }};
-                                                    --button-background-style: {% if block.settings.btn_bg_color_gradient != blank %}{{ block.settings.btn_bg_color_gradient }}{% else %}{{ block.settings.btn_bg_color }}{% endif %}">
-                                            {{ block.settings.text }}
-                                    </div>
-                                {%- endif -%}
-                            {%- when 'countdown' -%}
-                                <div class="announcement-bar__message text-center" id="{{block.id}}"
-                                    style="--countdown-text-color: {{ block.settings.color_countdown_text }}; 
-                                    --countdown-text-background: {{ block.settings.bg_color_countdown }}; 
-                                    --countdown-text-border: {{ block.settings.border_color_countdown }}"
-                                >
-                                    {% if block.settings.top_message_text != blank %}
-                                        <div class="top-mesage-countdown">{{ block.settings.top_message_text }}</div>
-                                    {% endif %}
-                                    {% if block.settings.annou_countdown != blank %}
-                                        <div class="announcement-countdown countdown-block" data-countdown-announcement data-countdown-value="{{ block.settings.annou_countdown }}"></div>
-                                    {% endif %}
-                                </div>
-                        {%- endcase -%}
-                    {%- endfor -%}
-                {%- endif -%}
-            </div>
-
-            {% if section.settings.enable_close and section.settings.layout == 'slider' %}
-                <button type="button" class="announcement-close clearfix{% if hasCountDown != blank %} hasCountDown{% endif %}" data-close-announcement aria-label="{{ 'general.common.close' | t }}" >
-                    {% render 'icon-close' %}
-                    {{ 'general.common.close' | t }}
-                </button>
-            {% endif %}
-        </div>
-    </announcement-bar-component>
-    
-    <script>
-        class AnnouncementBar extends HTMLElement {
-            constructor() {
-                super();
-            }
-            
-            connectedCallback() {
-                this.closeAnnouncementButton = this.querySelector('[data-close-announcement]');
-                this.announcementBarSlider = this.querySelector('[data-announcement-bar]');
-                this.announcementHasSlides = this.announcementBar?.querySelectorAll('.announcement-bar__message').length > 1;
-
-                if (AnnouncementBar.getCookie('announcement') == 'closed') {
-                    this.remove();
-                } else {
-                    this.style.opacity = 1;
-                    this.style.visibility = 'visible';
-                };
-                
-                this.initAnnouncementBarSlider();
-                this.closeAnnouncementButton?.addEventListener('click', this.closeAnnouncementBar.bind(this));
-            }
-    
-            closeAnnouncementBar(e) {
-                e.preventDefault();
-                e.stopPropagation();
-    
-                this.remove();
-                AnnouncementBar.setCookie('announcement', 'closed', 1);
-            }
-
-            initAnnouncementBarSlider() {
-                if (this.announcementHasSlides) {
-                    if(!this.announcementBar.classList.contains('slick-initialized')){
-                        $(this.announcementBar).slick({
-                            infinite: true,
-                            vertical: false,
-                            adaptiveHeight: true,
-                            slidesToShow: 1,
-                            slidesToScroll: 1,
-                            dots: false,
-                            arrows: this.announcementBar.dataset.arrows,
-                            autoplay: true,
-                            autoplaySpeed: 3000,
-                            nextArrow: '<button type="button" class="slick-next" aria-label="Next"><svg viewBox="0 0 478.448 478.448" class="icon icon-chevron-right" id="icon-chevron-right"><g><g><polygon points="131.659,0 100.494,32.035 313.804,239.232 100.494,446.373 131.65,478.448 377.954,239.232"></polygon></g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></button>',
-                            prevArrow: '<button type="button" class="slick-prev" aria-label="Previous"><svg viewBox="0 0 370.814 370.814" class="icon icon-chevron-left" id="icon-chevron-left"><g><g><polygon points="292.92,24.848 268.781,0 77.895,185.401 268.781,370.814 292.92,345.961 127.638,185.401"></polygon></g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></button>',
-                        });
-                    }
-                }
-            }
-
-            static setCookie(cname, cvalue, exdays) {
-                const d = new Date();
-                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-                const expires = 'expires=' + d.toUTCString();
-                document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/';
-            }
-
-            static getCookie(cname) {
-                const name = cname + '=';
-                const ca = document.cookie.split(';');
-        
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) === ' ') {
-                        c = c.substring(1);
-                    }
-                    if (c.indexOf(name) === 0) {
-                        return c.substring(name.length, c.length);
-                    }
-                }
-                
-                return '';
-            }
-        }
-    
-        customElements.define('announcement-bar-component', AnnouncementBar);
-    </script>
-{%- endif -%}
+{% endstyle %}
 
 {% schema %}
 {
-    "name": "t:sections.announcement-bar.name",
-    "max_blocks": 12,
-    "settings": [
-        {
-            "type": "checkbox",
-            "id": "enable_announcement",
-            "label": "t:sections.header.settings.header_layout.enable_announcement",
-            "default": true
-        },
-        {
-            "type": "select",
-            "id": "layout",
-            "label": "t:sections.product_block.settings.general.label__5",
-            "default": "slider",
-            "options": [
-                {
-                    "value": "slider",
-                    "label": "t:sections.product_block.settings.general.options__6"
-                },
-                {
-                    "value": "scroll",
-                    "label": "t:sections.main-collection-product-grid.settings.general.infinite_scrolling"
-                }
-            ]
-        },
-        {
-            "type": "checkbox",
-            "id": "arrow_active",
-            "label": "t:sections.announcement-bar.blocks.announcement.settings.text.enable_arrows",
-            "info": "t:sections.image-banner.settings.general.info",
-            "default": false
-        },
-        {
-            "type": "checkbox",
-            "id": "enable_close",
-            "label": "t:sections.announcement-bar.blocks.announcement.settings.text.enable_close",
-            "info": "t:sections.image-banner.settings.general.info",
-            "default": true
-        },
-        {
-            "type": "image_picker",
-            "id": "bg_image_announcement",
-            "label": "t:sections.announcement-bar.blocks.announcement.settings.countdown.select_image"
-        },
-        {
-            "type": "color",
-            "id": "color_text",
-            "label": "t:sections.announcement-bar.blocks.announcement.settings.color_scheme.color_text",
-            "default": "#b05d5d"
-        },
-        {
-            "type": "color",
-            "id": "bg_color_text",
-            "label": "t:settings_schema.colors.settings.colors_name.background_color",
-            "default": "#ffe8e8"
-        },
-        {
-            "type": "color_background",
-            "id": "bg_color_text_gradient",
-            "label": "t:settings_schema.colors.settings.colors_name.background_color_gradient"
-        },
-        {
-            "type": "range",
-            "id": "font_size_text",
-            "label": "t:sections.announcement-bar.blocks.announcement.settings.text.font_size",
-            "min": 0,
-            "max": 50,
-            "step": 1,
-            "unit": "t:sections.layout.mg_desktop.unit",
-            "default": 12
-        },
-        {
-            "type": "select",
-            "id": "font_style_text",
-            "label": "t:sections.general.settings.typography.font_style",
-            "default": "normal",
-            "options": [
-            {
-                "value": "normal",
-                "label": "t:settings_schema.typography.settings.font_style.options__1"
-            },
-            {
-                "value": "italic",
-                "label": "t:settings_schema.typography.settings.font_style.options__2"
-            },
-            {
-                "value": "oblique",
-                "label": "t:settings_schema.typography.settings.font_style.options__3"
-            }]
-        },
-        {
-            "type": "select",
-            "id": "font_weight_text",
-            "label": "t:settings_schema.typography.settings.font_weight.label",
-            "default": "500",
-            "options": [
-            {
-                "value": "400",
-                "label": "t:settings_schema.typography.settings.font_weight.options__1"
-            },
-            {
-                "value": "500",
-                "label": "t:settings_schema.typography.settings.font_weight.options__2"
-            },
-            {
-                "value": "600",
-                "label": "t:settings_schema.typography.settings.font_weight.options__3"
-            },
-            {
-                "value": "700",
-                "label": "t:settings_schema.typography.settings.font_weight.options__4"
-            },
-            {
-                "value": "800",
-                "label": "t:settings_schema.typography.settings.font_weight.options__5"
-            },
-            {
-                "value": "900",
-                "label": "t:settings_schema.typography.settings.font_weight.options__6"
-            }]
-        },
-        {
-            "type": "header",
-            "content": "t:sections.main-product.settings.general.spacing"
-        },
-        {
-            "type": "range",
-            "id": "padding_top",
-            "label": "t:sections.product_block.settings.general.label__3",
-            "min": 0,
-            "max": 50,
-            "step": 1,
-            "unit": "t:sections.layout.mg_desktop.unit",
-            "default": 0
-        },
-        {
-            "type": "range",
-            "id": "padding_bottom",
-            "label": "t:sections.product_block.settings.general.label__4",
-            "min": 0,
-            "max": 50,
-            "step": 1,
-            "unit": "t:sections.layout.mg_desktop.unit",
-            "default": 0
-        }
-    ],
-    "blocks": [
-        {
-            "type": "announcement",
-            "name": "t:sections.announcement-bar.blocks.announcement.name",
-            "settings": [
-                {
-                    "type": "html",
-                    "id": "text",
-                    "label": "t:sections.announcement-bar.blocks.announcement.settings.text.label",
-                    "default": "<p>Welcome to our store</p>"
-                },
-                {
-                    "type": "paragraph",
-                    "content": "Button"
-                },
-                {
-                    "type" : "color",
-                    "id" : "btn_color",
-                    "label" : "t:settings_schema.colors.settings.colors_name.color",
-                    "default" : "#f84248"
-                },
-                {
-                    "type" : "color",
-                    "id" : "btn_border_color",
-                    "label" : "t:settings_schema.colors.settings.colors_name.border_color",
-                    "default" : "#ffffff"
-                },
-                {
-                    "type" : "color",
-                    "id" : "btn_bg_color",
-                    "label" : "t:settings_schema.colors.settings.colors_name.background_color",
-                    "default" : "#ffffff"
-                },
-                {
-                    "type" : "color_background",
-                    "id" : "btn_bg_color_gradient",
-                    "label" : "t:settings_schema.colors.settings.colors_name.background_color_gradient"
-                }
-            ]
-        },
-        {
-            "type": "countdown",
-            "name": "t:sections.announcement-bar.blocks.announcement.settings.countdown.title",
-            "limit": 1,
-            "settings": [
-                {
-                    "type": "textarea",
-                    "id": "top_message_text",
-                    "label": "t:sections.announcement-bar.blocks.announcement.settings.countdown.label",
-                    "default": "Limited-time Offer!"
-                },
-                {
-                    "type" : "textarea",
-                    "id" : "annou_countdown",
-                    "label" : "t:sections.announcement-bar.blocks.announcement.settings.countdown.title",
-                    "default" : "Dec 31, 2022 18:00:00",
-                    "info": "t:settings_schema.countdown.settings.general.info"
-                },
-                {
-                    "type": "color",
-                    "id": "color_countdown_text",
-                    "label": "t:sections.announcement-bar.blocks.announcement.settings.color_scheme.color_text",
-                    "default": "#06142e"
-                },
-                {
-                    "type": "color",
-                    "id": "border_color_countdown",
-                    "label": "t:settings_schema.colors.settings.colors_name.border_color",
-                    "default": "#f7f8fa"
-                },
-                {
-                    "type": "color",
-                    "id": "bg_color_countdown",
-                    "label": "t:settings_schema.colors.settings.colors_name.background_color",
-                    "default": "#f7f8fa"
-                }
-            ]
-        }
-    ],
-    "default": {
-        "blocks": [
-            {
-                "type": "announcement"
-            }
-        ]
+  "name": "Announcement bar",
+  "settings":
+  [
+    {
+      "type": "richtext",
+      "id": "announcement_text",
+      "label": "Text",
+      "default": "<p>Share a shop announcement or message</p>"
+    },
+    {
+      "type": "range",
+      "id": "announcement_text_size",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "link_list",
+      "id": "top_nav",
+      "label": "Add additional links with a menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_cart",
+      "label": "Cart links in announcement bar",
+      "info":"Not recommended if country/region selector enabled",
+      "default": false
+    },
+    {
+       "type": "header",
+       "content": "Language Selector",
+       "info": "To add a language, go to your [language settings.](/admin/settings/languages)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Enable language selector",
+      "default": false
+    },
+    {
+       "type": "header",
+       "content": "Country/Region Selector",
+       "info": "To add a country/region, go to your [payment settings.](/admin/settings/payments)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Enable country/region selector",
+      "default": false
     }
+  ]
 }
 {% endschema %}
-
-

@@ -1,4 +1,16 @@
-<div class="{% if section.settings.include_margins %}page-width{% endif %}">
+{%- liquid
+
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'mb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'mt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'mt0 mb0'
+  endif
+
+-%}
+<div class="{% unless section.settings.full_width %}row{% endunless %} global__section global__section--margin {{ section_padding }}">
   {%- for block in section.blocks -%}
     {% render block %}
   {%- endfor -%}
@@ -6,20 +18,48 @@
 
 {% schema %}
 {
-  "name": "t:sections.apps.name",
-  "class": "spaced-section",
+  "name": "Apps",
   "tag": "section",
   "settings": [
     {
       "type": "checkbox",
-      "id": "include_margins",
-      "label": "t:sections.apps.settings.include_margins.label",
-      "default": false
+      "id": "full_width",
+      "label": "Full width"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both"
     }
   ],
-  "blocks": [{"type": "@app"}],
-  "presets": [{
-    "name": "t:sections.apps.presets.name"
-  }]
+  "blocks": [
+  {
+    "type": "@app"
+  }
+  ],
+  "presets": [
+  {
+      "name": "Apps"
+    }
+  ]
 }
 {% endschema %}

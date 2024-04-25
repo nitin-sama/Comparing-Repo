@@ -1,293 +1,456 @@
 <!DOCTYPE html>
-{%- liquid
-  if settings.list_iso_rtl != blank
-    assign locale_iso_code = request.locale.iso_code
-    assign arr_list_rtl = settings.list_iso_rtl | remove: ' ' | split: ','
-    if arr_list_rtl contains locale_iso_code
-      assign enable_iso_rtl = true
-    else
-      assign enable_iso_rtl = false
-    endif
-  endif
--%}
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>{% render 'spdn' %}
+<!-- Preorder Panda Pixel start-->
+<script async src='https://pre.bossapps.co/js/script?shop=wetswimwearshop.myshopify.com'></script>
+<!-- Preorder Panda Pixel ended-->
 
-<html
-  class="no-js"
-  lang="{{ request.locale.iso_code }}"
-  {% if settings.enable_layout_rtl and enable_iso_rtl %}
-    dir="rtl"
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {% if product.handle == 'carla-sarong-1' or product.handle == 'carla-sarong-2' or product.handle == 'carla-sarong-3' or product.handle == 'carla-sarong-4' or product.handle == 'carla-sarong-5' or product.handle == 'carla-sarong-6' %}
+    <meta name="robots" content="noindex,nofollow">
   {% endif %}
->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
-    <meta name="theme-color" content="">
-    <meta http-equiv="Delegate-CH" content="sec-ch-ua https://ads.trafficjunky.net; sec-ch-ua-arch https://ads.trafficjunky.net; sec-ch-ua-full-version-list https://ads.trafficjunky.net; sec-ch-ua-mobile https://ads.trafficjunky.net; sec-ch-ua-model https://ads.trafficjunky.net; sec-ch-ua-platform https://ads.trafficjunky.net; sec-ch-ua-platform-version https://ads.trafficjunky.net;">
-    <link rel="canonical" href="{{ canonical_url }}" canonical-shop-url="{{ shop.url }}/">
-    {%- if settings.favicon != blank -%}
-      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
-    {%- endif -%}
-    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
-    <title>
-      {{ page_title }}
-      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name or page_title contains 'Amazing Intimates' %} &ndash; {{ shop.name }}{% endunless -%}
-    </title>
-    {% if page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
-    {% endif %}
-    {% render 'meta-tags' %}
 
-    {% unless template contains 'cart' %}
-    {{ 'prefetch.js' | asset_url | script_tag }}
-    {% endunless %}
+  <!-- Establish early connection to external domains -->
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://monorail-edge.shopifysvc.com">
+  <link rel="preconnect" href="//ajax.googleapis.com" crossorigin />
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-589399020"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-589399020');
+</script>
+
 
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-P24MRT4P');</script>
+})(window,document,'script','dataLayer','GTM-WBJFQPX');</script>
 <!-- End Google Tag Manager -->
 
-<!-- Reddit Pixel -->
-<script>
-!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init','a2_dvbouvql47tv', {"optOut":false,"useDecimalCurrencyValues":true,"aaid":"<AAID-HERE>","email":"<EMAIL-HERE>","externalId":"<EXTERNAL-ID-HERE>","idfa":"<IDFA-HERE>"});rdt('track', 'PageVisit');
-</script>
-<!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
-<!-- End Reddit Pixel -->
+  <script type="text/javascript">
+    {% if template contains 'cart' %}
+      
+    gtag('event', 'add_to_cart', {
+        'send_to': 'AW-589399020',
+        'value': '{{ cart.total_price | money_without_currency  | remove: ','  }}',
+        'items': [{
+            'id': [{% for item in cart.items %}'{{ item.product.id }}'{% unless forloop.last %}, {% endunless %}{% endfor %}],
+            'google_business_vertical': 'retail'
+        }]
+    });
     
-    <script
-      async
-      type="text/javascript"
-      data-src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=UVNH8E"
-    ></script>
-    <script type="text/lazyload">
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'AW-844219497');
-    </script>
-
+    {% elsif template contains 'collection' %}
     
-    {{ content_for_header }}
-
-    {% render 'variable' %}
-    {{ 'custom-ct.css' | asset_url | stylesheet_tag }}
-    {% render 'global-style' %}
-    {% render 'global-script' %}
-
-    <script>
-      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
-    </script>
-
-    {%- liquid
-      if settings.layout_header == 'full'
-        assign layout_header = 'header-full-width'
-      elsif settings.layout_header == 'boxed'
-        assign layout_header = 'header-boxed'
-      elsif settings.layout_header == 'custom_width'
-        assign layout_header = 'header-custom-width'
-      endif
-
-      if settings.layout_body == 'full'
-        assign layout_body = 'body-full-width'
-      elsif settings.layout_body == 'boxed'
-        assign layout_body = 'body-boxed'
-      elsif settings.layout_body == 'custom_width'
-        assign layout_body = 'body-custom-width'
-      endif
-
-      if settings.layout_footer == 'full'
-        assign layout_footer = 'footer-full-width'
-      elsif settings.layout_footer == 'boxed'
-        assign layout_footer = 'footer-boxed'
-      elsif settings.layout_footer == 'custom_width'
-        assign layout_footer = 'footer-custom-width'
-      endif
-
-      if settings.style_dots == '02'
-        assign style_dots = 'style-dots-2'
-      endif
-
-      if settings.style_arrows == '02'
-        assign style_arrows = 'style-arrows-2'
-      endif
-
-      if settings.product_card_layout == '02'
-        assign product_card_layout = 'product-card-layout-02'
-      elsif settings.product_card_layout == '03'
-        assign product_card_layout = 'product-card-layout-03'
-      elsif settings.product_card_layout == '04'
-        assign product_card_layout = 'product-card-layout-04'
-      elsif settings.product_card_layout == '05'
-        assign product_card_layout = 'product-card-layout-05'
-      elsif settings.product_card_layout == '06'
-        assign product_card_layout = 'product-card-layout-06'
-      elsif settings.product_card_layout == '07'
-        assign product_card_layout = 'product-card-layout-07'
-      else
-        assign product_card_layout = 'product-card-layout-01'
-      endif
-
-      if settings.quick_shop_type == '2'
-        assign quick_shop_type = 'quick_shop_option_2'
-      elsif settings.quick_shop_type == '3'
-        assign quick_shop_type = 'quick_shop_option_3'
-      endif
-
-      unless request.design_mode
-        if settings.banner_animation == 'effect_1'
-          assign banner_animation = 'banner-animation-1'
-        endif
-      endunless
-
-      if settings.style_text_size_varriant == '02'
-        assign style_text_size_varriant = 'size_varriant_style_2'
-      endif
-    -%}
-    {% render 'rapid-search-settings' %}
-    {%- render 'bold-subscription-widget' -%}
-    <script data-src="https://cdn-widgetsrepository.yotpo.com/v1/loader/5c3t4L-PONMgWuCspy4AyA" async></script>
-    <script type="text/lazyload">
-      (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "hmxhowtfcf");
-    </script>
-
-    {% render 'qikify-apps' %}
-
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "hmxhowtfcf");
-</script>
-
-
-    {% render 'digismoothie-giftbox' %}
-
-    {% include 'add_header_assets' %}
-    {% include 'disable-right-click' %}
-  
-  {% if canonical_url == 'https://soamazingintimates.myshopify.com/collections' %}
-<title>Shop Unique Collections - Amazing Intimate Essentials</title>
-<meta name="description" content="Amazing Intimate essentials has been trusted for over 40 years. With over 30 Adult Stores throughout the Northeast and the US. SoAmazing.com carries products supporting sexual health, sexual wellness, and nearly every type of pleasure product available. Free discreet shipping on orders above 49 dollars.">
-{% endif %}
-
-    {% render 'rich-schema' %}
-  
-  {% capture boostersnippet %}{% include "booster-apps-common" %}{% endcapture %}{% unless boostersnippet contains "Liquid error" %}{{ boostersnippet }}{% endunless %}
-</head>
-
-  <body class="template-{{ request.page_type }} {{layout_header}} {{layout_body}} {{layout_footer}} {{style_dots}} {{style_text_size_varriant}} {{style_arrows}} {{product_card_layout}} {{ banner_animation }}{% if settings.enable_button_disable_arrows %} enable_button_disable_arrows{% endif %}{% if settings.display_text_color_title %} enable_text_color_title{% endif %}{% if settings.style_text_color_varriant == '02' %} style_2_text_color_varriant{% endif %}{% if settings.hide_compare_homepage %} hide_compare_homepage{% endif %} {{ quick_shop_type }}{% if settings.show_image_loading %} show_image_loading{% endif %}{% if settings.show_effect_close %} show_effect_close{% endif %}{% if settings.enable_layout_rtl and enable_iso_rtl %} layout_rtl{% endif %}{% if template.suffix contains 'foreplay-friday' %} foreplay-friday{%  endif %}">
-   
-   <script type="text/javascript" src="https://hw-cdn2.adtng.com/delivery/idsync/idsync.min.js" defer></script>
-   <script>
-            window.idsync.config(34007)
-            .fp_get()
-            .sync();
-   </script>
+    gtag('event', 'view_item_list', {
+        'send_to': 'AW-589399020',
+        'value': '0',
+        'items': [{
+            'id': [{% for item in cart.items %}'{{ item.product.id }}'{% unless forloop.last %}, {% endunless %}{% endfor %}],
+            'google_business_vertical': 'retail'
+        }]
+    });
     
-    <script>
-      function share_fb() {
-	var window_location_encoded = encodeURI(window.location);
-  	var share_link = "https://www.facebook.com/sharer/sharer.php?u="+window_location_encoded;
-  	window.open(share_link,'_blank');
-}
-    </script>
-    <script language="javascript">
-    function tweetCurrentPage()
-    { window.open("https://twitter.com/share?url="+ encodeURIComponent(window.location.href)+"&text="+document.title, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false; }
-</script>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P24MRT4P"
+    {% elsif template contains 'product' %}
+    
+    gtag('event', 'view_item', {
+        'send_to': 'AW-589399020',
+        'value': '{{ product.selected_or_first_available_variant.price | money_without_currency  | remove: ','  }}',
+        'items': [{
+            'id': {{ product.id }},
+            'google_business_vertical': 'retail'
+        }]
+    });
+    
+    {% elsif template contains 'search' %}
+    
+    gtag('event', 'view_search_results', {
+        'send_to': 'AW-589399020',
+        'value': '0',
+        'items': [{
+            'id': [{% for item in cart.items %}'{{ item.product.id }}'{% unless forloop.last %}, {% endunless %}{% endfor %}],
+            'google_business_vertical': 'retail'
+        }]
+    });
+    
+    {% endif %}  
+    </script>    
+    <!-- End Google remarketing code -->
+
+    <!-- FAQ Schema -->
+    {% if page.handle == 'customer-service' %}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org/",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Which forms of payment do you accept?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We accept the following forms of payment: Visa, MasterCard, American Express, PayPal. Google Pay, and Apple Pay."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I figure out what size I am?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>To make it easy as pie we have a size conversion chart to help you determine what size fits you best when ordering. Please use this chart as a general guide to compare the various size scales: <a href=\"https://wet-swimwear.com/pages/fit-guide\">Fit Guide</a></p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I cancel or make changes to my order?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>In order for our customers to receive their product in the shortest time possible, we process orders as soon as they are received. So we are unable to cancel, change, combine shipping or add items to an order once it has been processed. BUT you do have time before your order goes into processing so if you have any questions or wish to make changes on your order please contact us ASAP and we’ll do what we can to help you. <a href=\"https://wet-swimwear.com/pages/contact-us\">Contact Us</a></p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What if an item I ordered is no longer available?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We make every effort to keep adequate stock of online items, but sometimes we sell out faster than we can keep up. If we are out of stock on a particular item you have ordered, we will notify you via e-mail. Such changes will reflect on your final order total as well as your shipping  confirmation form. We will do our very best to offer you either an alternative product, that you might love a little more, or let you know when your original product is back in stock."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is my order shipped?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "All orders are shipped via FedEx unless it was specified otherwise on your order at the time of check out. A shipping confirmation email will be sent once your order has been shipped, this confirmation will include order details along with your tracking number."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How much does shipping cost?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>Making you happy remains our number one priority, if your preferred shipping method is not listed in the above table please <a href=\"https://wet-swimwear.com/pages/contact-us\">Contact Us</a> and we will make every effort to accommodate your request.</p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What if my preferred shipping method is not listed?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>Making you happy remains our number one priority, if your preferred shipping method is not listed in the above table please <a href=\"https://wet-swimwear.com/pages/contact-us\">Contact Us</a> and we will make every effort to accommodate your request.</p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How long does it take for my order to be shipped?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We make every effort to ship your order as soon as it is received. Usually this happens within 24 hours."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How long does it take for me to receive my order?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The length of ship time depends on where in the world you might be, please view shipping chart for estimated ship times."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do you ship internationally?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! We currently ship to Canada, EU, and Australia via FedEx and UPS. Postage will vary depending on country.  Items shipped internationally are shipped DDU (Delivery Duty Unpaid), the product prices displayed are exclusive of all taxes and duties. So once your order arrives at its destination you will be required to pay all import duties, customs and local sales taxes levied by the country you are shipping to, in order to release your order from customs."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What are your shipping guidelines?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>Orders placed Monday-Friday before 2 PM PST will enter processing the same day, excluding holidays, and will ship within one business day pending product availability and credit verification. All orders placed Monday-Friday after 2 PM PST will begin processing the following business day, and ship within 48 hours. We will contact you with via email if the merchandise you have selected is not currently in stock or if we need additional identification provided for credit verification. Unfortunately at this time we do not offer Saturday delivery as a standard shipping method, however, Saturday delivery is available at customer’s expense. Restrictions apply for some locations, please <a href=\"https://wet-swimwear.com/pages/contact-us\">Contact Us</a> to setup Saturday delivery.</p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are there any shipping restrictions on my order?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>Because shipping is out of our control, there are some restrictions with each shipping method. UPS does not offer shipping to P.O. Box or A.F.O. addresses, please keep this in mind when choosing the appropriate shipping method for you. Please <a href=\"https://wet-swimwear.com/pages/contact-us\">Contact Us</a> if you have any questions regarding shipping restrictions.</p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What do I do if my order is lost or I have not received it within the estimated ship time?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>We want our customers to be 100% happy with our products and services. We understand that sometimes packages are lost, should you realize that your package has been delayed and is lost, <a href=\"https://wet-swimwear.com/pages/contact-us\">Contact Us</a> and we will make every effort to assist you in recovering that package. Need be, we will gladly ship you a new order if yours remains M.I.A. after the specified estimated shipping time.</p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is your return policy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<p>Your total satisfaction with our product is top priority. We know how it is with online shopping and get that sometimes, try as we might, we need to exchange or return an item and that’s why we do what we can to make the process as easy as possible for you. We accept returns on all items within 20 days from the receipt of your order. Item must be postmarked within 10 days of the RA# being issued.<br>Returning items must adhere to the below for a full refund. Inspection will be made upon receipt to ensure items:
+                <ul>
+                <li>are unworn and in their original condition</li>
+                <li>have their original tags</li>
+                <li>are in their original packaging</li>
+                <li>hygienic liner attached on swimwear</li>
+                </ul>
+                <dd>We ask that undergarments be kept on while trying on your swimsuit.
+                <br>Every returned item must have an authorization number in order to be processed. To submit a return request, 
+                please visit our <a href=\"https://wetswimwearshop.returnscenter.com/\">Returns Center</a>.
+                <br>Refunds where applicable will be made in the original form of payment. Please allow 3-4 business days for refunds to appear on your statement.
+                <br><strong>IMPORTANT:</strong><br>The return package should have the RA number clearly marked on the outside of the package and be shipped to the following address:
+                </dd>
+                <br>WET/ Returns<br>2023 Chico Avenue<br>South El Monte, CA 91733</p>"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I exchange an item?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We are sorry but exchanges are not accepted. If you would like to size up/down, please return your original purchase and place a new order. It will be the fastest and simplest way we can get a new order out to you."
+              }
+            }
+          ]
+        }
+      </script>
+    {% endif %}
+    <!-- End FAQ Schema -->
+
+  {%- liquid
+
+    assign main_font = settings.main_font
+    assign heading_font = settings.heading_font
+    assign nav_font = settings.nav_font
+    assign main_font_bold = main_font | font_modify: 'weight', 'bolder'
+    assign main_font_italic = main_font | font_modify: 'style', 'italic'
+    assign main_font_bold_italic = main_font_bold | font_modify: 'style', 'italic'
+
+  -%}
+
+  <!-- Preload onDomain stylesheets and script libraries -->
+  <link rel="preload" href="{{ 'stylesheet.css' | asset_url }}" as="style">
+  <link rel="preload" as="font" href="{{ main_font | font_url }}" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="{{ nav_font | font_url }}" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="{{ heading_font | font_url }}" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'eventemitter3.min.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'vendor-video.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'theme.js' | asset_url }}" as="script">
+
+
+  {% if settings.favicon %}<link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png" />{% endif %}
+  <link rel="canonical" href="{{ canonical_url }}" />
+
+  {% if template == 'list-collections' %}
+    <title>Lined Swimsuits | Shop Our Collections | WET Swimwear</title>
+    <meta name="description" content="Shop WET Swimwear's collections for fully-lined, chic swimsuits that will have you feeling confident all summer long. Find your ultimate swim pieces today!" />
+  {% else %}
+    <title>{% if template == 'index' %}{% if page_title contains 'Welcome' %}{{ shop.name }} &ndash; Welcome{% else %}{{ page_title }}{% endif %}{% elsif template == '404' %}Page Not Found{% elsif page_title contains shop.name %}{{ page_title }}{% else %}{{ page_title }}{% endif %}</title>
+    {% if page_description %}<meta name="description" content="{{ page_description }}" />{% endif %}
+  {% endif %}
+
+  {% render 'social-media-meta-tags' %}
+  {% render 'structured-data' %}
+  {% render 'css-variables' %}
+
+  <link rel="stylesheet" href="{{ 'stylesheet.css' | asset_url }}" type="text/css">
+
+  {% if template.name == 'index' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "WebSite",
+      "name": "wet-swimwear.com",
+      "url": "https://wet-swimwear.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://wet-swimwear.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>  
+  {% endif %}
+
+  <style>
+  {{ main_font | font_face: font_display: 'swap' }}
+  {{ nav_font | font_face: font_display: 'swap' }}
+  {{ heading_font | font_face: font_display: 'swap' }}
+  {{ main_font_bold | font_face: font_display: 'swap' }}
+  {{ main_font_italic | font_face: font_display: 'swap' }}
+  {{ main_font_bold_italic | font_face: font_display: 'swap' }}
+  </style>
+
+  {{ content_for_header }}
+
+
+	{{ shop.metafields.loox["global_html_head"] }}
+<img alt="icon" id="svgicon" width="1400" height="1400" style="pointer-events: none; position: absolute; top: 0; left: 0; width: 99vw; height: 99vh; max-width: 99vw; max-height: 99vh;"  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSI5OTk5OXB4IiBoZWlnaHQ9Ijk5OTk5cHgiIHZpZXdCb3g9IjAgMCA5OTk5OSA5OTk5OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIGZpbGwtb3BhY2l0eT0iMCI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9Ijk5OTk5IiBoZWlnaHQ9Ijk5OTk5Ij48L3JlY3Q+IDwvZz4gPC9zdmc+" loading="eager"></head>
+<body class="gridlock template-{{ template | handleize }} js-slideout-toggle-wrapper js-modal-toggle-wrapper {% render 'body-classes' %}">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WBJFQPX"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-    <div class="body-content-wrapper">
-      <a class="skip-to-content-link button visually-hidden" href="#MainContent">
-        {{ 'accessibility.skip_to_text' | t }}
-      </a>
+  <div class="js-slideout-overlay site-overlay"></div>
+  <div class="js-modal-overlay site-overlay"></div>
 
-      {% render 'wrapper-header' %}
+  <aside class="slideout slideout__drawer-left" data-wau-slideout="mobile-navigation" id="slideout-mobile-navigation">
+    {% section 'mobile-navigation' %}
+  </aside>
 
-      {% if settings.layout_body == 'boxed' %}
-        <div class="wrapper-hasbanner-adv">
-      {% endif %}
-      {% render 'halo-banner-adv-left' %}
-      {% render 'halo-banner-adv-right' %}
-      <main id="MainContent" class="wrapper-body content-for-layout focus-none" role="main" tabindex="-1">
+  <div class="site-wrap">
+
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
+
+    <div class="page-wrap">
+
+      <main class="content-wrapper" role="main">
+
+        {% render 'mobile-search' %}
         {{ content_for_layout }}
+
       </main>
-      {% if settings.layout_body == 'boxed' %}
-        </div>
-      {% endif %}
 
-      <div class="wrapper-footer">
-        {% render 'wrapper-footer' %}
+    </div><!-- /.page-wrap -->
+
+    {% section 'footer' %}
+
+    <div style="display:none;" data-wau-slideout-content="search-sidebar" data-wau-slideout="search-sidebar">
+      <div class="slideout__trigger--close">
+        <button class="slideout__trigger-search-sidebar js-slideout-close" data-slideout-direction="right" aria-label="Close sidebar" tabindex="0" type="button" name="button">
+          <div class="icn-close"></div>
+        </button>
       </div>
-
-      {% section 'halo-toolbar-mobile' %}
-
-      <ul hidden>
-        <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
-      </ul>
-
-      {% render 'global-script-2' %}
+      <div class="sidebar__search-container">
+        {%- render 'predictive-search' -%}
+      </div>
     </div>
-    {% render 'halo-popup' %}
 
-    {%- if settings.enable_view_documentation -%}
-      {% render 'theme-editor-notification' %}
-    {%- endif -%}
+  </div><!-- /.site-wrap -->
 
-    {% render 'theme-demo-notification' %}
+  {%- if settings.cart_type == 'drawer' -%}
+  <aside class="slideout slideout__drawer-right mini-cart" data-wau-slideout="ajax-cart" id="slideout-ajax-cart">
+    {% render 'cart-mini' %}
+  </aside>
+  {% elsif settings.cart_type == 'modal_cart' %}
+  <div class="modal__container" data-wau-modal="ajax-cart" id="modal-ajax-cart">
+    <div class="modal__inner-wrapper">
+      {% render 'cart-mini' %}
+    </div>
+  </div>
+  {%- endif -%}
+  {%- if settings.quickview -%}
+  <div class="modal__container" data-wau-modal="quickview" id="modal-quickview-cart">
+    <div class="modal__inner-wrapper">
+      {%- render 'product-quickview' -%}
+    </div>
+  </div>
+{%- endif -%}
 
-    {%- if settings.use_custom_js -%}
-      {{ 'custom.js' | asset_url | script_tag }}
-    {%- endif -%}
+  {% render 'cart-config' %}
+  <script src="{{ 'eventemitter3.min.js' | asset_url }}"></script>
+  <script src="{{ 'vendor-video.js' | asset_url }}" defer></script>
+  <script src="{{ 'theme.js' | asset_url }}"></script>
 
-    <div class="background-overlay">
-      {% if settings.show_effect_close %}
-        <div class="background-cursor-wrapper">
-          <div class="background-cursor-wrapper_outer">
-            <div class="background-cursor-wrapper_inner">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">
-                <g class="nc-icon-wrapper" fill="#ffffff" transform="translate(0.5, 0.5)"><line fill="none" stroke-width="6" x1="46" y1="2" x2="2" y2="46"/> <line fill="none" stroke-width="6" x1="46" y1="46" x2="2" y2="2"/></g>
-              </svg>
-            </div>
-          </div>
+  <a href="#" title="Click to scroll to top" class="scrollup">
+    {% render 'snip-icons',
+       wrapper: '.scrollup',
+       type: 'apollo',
+       icon: 'up-carrot',
+       classes: 'scrollup--icon',
+       size: '14px',
+       fill: 'var(--text-color)',
+       hover: 'var(--text-color)' %} TOP
+  </a>
+  {% section 'mailing-popup' %}
+  <div class="clear"></div>
+
+  <script>
+    window.lazySizesConfig = window.lazySizesConfig || {};
+    window.lazySizesConfig.minSize = 360;
+  </script>
+
+  {%- if request.page_type contains 'customers/' or template == 'cart' -%}
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+  {%- endif -%}
+  {%- if request.page_type contains 'customers/' -%}
+    <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer="defer"></script>
+  {%- endif -%}
+
+  <script>
+    document.documentElement.className = document.documentElement.className.replace("no-js","js");
+  </script>
+
+  <!-- Root element of PhotoSwipe. Must have class pswp. -->
+  <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
         </div>
-      {% endif %}
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+          <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            {% render 'snip-icons',
+             wrapper: '.pswp__button',
+             type: 'apollo',
+             icon: 'left-carrot',
+             classes: 'pswp__button--icon',
+             size: '12px',
+             fill: 'var(--text-color)',
+             hover: 'var(--text-color)' %}
+          </button>
+          <button class="pswp__button pswp__button--close" title="Close (Esc)">
+            {% render 'snip-icons',
+             wrapper: '.pswp__button',
+             type: 'apollo',
+             icon: 'close',
+             classes: 'pswp__button--icon',
+             size: '16px',
+             fill: 'var(--text-color)',
+             hover: 'var(--text-color)' %}
+          </button>          
+          <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            {% render 'snip-icons',
+             wrapper: '.pswp__button',
+             type: 'apollo',
+             icon: 'right-carrot',
+             classes: 'pswp__button--icon',
+             size: '12px',
+             fill: 'var(--text-color)',
+             hover: 'var(--text-color)' %}
+          </button>
+        </div>
     </div>
+  </div>
+  <script>
+   AOS.init();
+ </script>
+  {% include 'globo.preorder.custom' %}
 
-    {% render 'halo-sidebar' %}
-    {% include 'smile-initializer' %}
-
-    <!-- Gorgias Chat Widget Start -->
-    <script
-      id="gorgias-chat-widget-install-v3"
-      data-src="https://config.gorgias.chat/bundle-loader/01H2BR7YNB46CHEE98NR8VGCX6?source=shopify1click"
-    ></script>
-    <script id="gorgias-chat-shopify-install">
-      !function(_){_.SHOPIFY_PERMANENT_DOMAIN="{{shop.permanent_domain}}",_.SHOPIFY_CUSTOMER_ID="{{customer.id}}",_.SHOPIFY_CUSTOMER_EMAIL="{{customer.email}}"}(window||{});
-    </script>
-    <!-- Gorgias Chat Widget End -->
-
-    <script
-      data-src="https://widget.sezzle.com/v1/javascript/price-widget?uuid=9b421dfe-6a2d-4225-b9f1-c9117dcb7283"
-    ></script>
-
-    {% include 'add_footer_assets' %}
-    {{ 'footer.js' | asset_url | script_tag | replace: 'src', 'defer src' }}
-
-                  <script type="text/javascript">(function e(){var e=document.createElement("script");e.type="text/javascript",e.async=true,e.src="//staticw2.yotpo.com/FtnaqANEGgzcSfuHQo9kEDTxdxjPNkckEZyNGZtc/widget.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})(); </script>
-  
-  </body>
+	{{ shop.metafields.loox["global_html_body"] }}
+</body>
 </html>
