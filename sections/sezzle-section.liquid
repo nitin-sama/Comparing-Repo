@@ -1,0 +1,183 @@
+<div
+  class="sezzle-section__wrapper"
+  style="background-image: url('{{ section.settings.background_image | img_url: 'master' }}');"
+>
+  <div class="container-1170">
+    <div class="sezzle-section__inner">
+      <div class="sezzle-section__inner__flex">
+        {% if section.settings.image %}
+        {{ section.settings.image | image_url: width: 500 | image_tag }}
+      {% endif %}
+      <h2>{{ section.settings.heading }}</h2>
+      </div>
+      
+      <div class="sezzle-features">
+        <p>{{ section.settings.text_one }}</p>
+        <p>{{ section.settings.text_two }}</p>
+        <p>{{ section.settings.text_three }}</p>
+      </div>
+
+      <a href="{{ section.settings.button_url }}" class="btn button">{{ section.settings.button_text }}</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Sezzle Section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Your Heading Here"
+    },
+    {
+      "type": "text",
+      "id": "text_one",
+      "label": "First Text Block",
+      "default": "This is the first text block."
+    },
+    {
+      "type": "text",
+      "id": "text_two",
+      "label": "Second Text Block",
+      "default": "This is the second text block."
+    },
+    {
+      "type": "text",
+      "id": "text_three",
+      "label": "Third Text Block",
+      "default": "This is the third text block."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Click Me"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sezzle Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+    .sezzle-section__inner {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-content: center;
+      align-items: center;
+  }
+
+  .sezzle-section__inner img {
+      max-width: 150px;
+      height: auto;
+  }
+
+  .sezzle-section__inner h2 {
+      color: white;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 0;
+      letter-spacing:4px;
+  }
+
+  .sezzle-features {
+      display: flex;
+      gap: 40px;
+      color: white;
+      font-weight: light;
+      font-size: 18px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+
+  }
+
+  .sezzle-section__inner .button {
+      margin-top: 20px;
+      max-width: 200px;
+      background: #f8b71a;
+  }
+
+  .sezzle-section__inner .button:hover {
+      background: #45205f;
+  }
+
+  @media(max-width: 768px){
+     .sezzle-features {
+      gap: 0px;
+      align-items: center;justify-content: center;
+  }
+      .sezzle-features p{
+      max-width: 220px;
+      text-align: center;
+  }
+  }
+
+  .sezzle-section__wrapper {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+  }
+  .sezzle-section__inner__flex {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.sezzle-section__inner__flex h2 {
+    margin: 0;
+}
+
+.sezzle-features p{
+    padding: 0;
+    margin: 20px 0;
+}
+
+@media(max-width: 768px){
+    .sezzle-section__inner {
+    padding: 20px 0px;
+}
+
+.sezzle-section__inner__flex {
+    gap: 20px;
+}
+    .sezzle-section__inner__flex h2{
+    font-size: 16px !important;
+}
+    .sezzle-section__inner__flex img {
+    max-width: 120px !important;
+}
+    .sezzle-features p{
+    max-width: 100%;
+}
+    .sezzle-features p {
+    padding: 0;
+    margin: 5px 0;
+}
+}
+</style>

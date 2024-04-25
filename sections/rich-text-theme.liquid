@@ -1,0 +1,126 @@
+<div class="rich-text-omega-{{ section.id }}" style="background-color: {{ section.settings.background_color }};">
+  <div class="container-1170">
+    <div class="rich-text-omega__inner">
+      {% assign heading_tag = section.settings.heading_level %}
+      <{{ heading_tag }}>
+        <span
+          {% if section.settings.heading_background_image != blank %}
+            style="background-image: url('{{ section.settings.heading_background_image | img_url: '400x' }}');"
+          {% endif %}
+        >
+          {{- section.settings.heading_text -}}
+        </span>
+      </{{ heading_tag }}>
+      <div class="rich-text-omega__description">
+        {{ section.settings.rich_text }}
+      </div>
+      {% if section.settings.button_url != blank %}
+        <a href="{{ section.settings.button_url }}" class="button">{{ section.settings.button_text }}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rich Text Omega",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "Heading Level",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "image_picker",
+      "id": "heading_background_image",
+      "label": "Heading Background Image"
+    },
+    {
+      "type": "richtext",
+      "id": "rich_text",
+      "label": "Rich Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Click Here"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich Text Omega",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+    .rich-text-omega__inner {
+      max-width: 900px;
+      margin: 0px auto;
+      margin-top: 60px;
+      text-align: center;
+  }
+
+  .rich-text-omega__inner .button{
+      margin-top: 20px;
+      max-width: 200px;
+      background-color: #f8b71a;
+      border: #f8b71a;
+  }
+
+  .rich-text-omega-{{ section.id }} .rich-text-omega__inner h2 span{
+      color: white;
+      font-weight: 500;
+      font-size: 20px;
+      padding: 40px 25px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+  }
+</style>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+{%- liquid
+  if settings.list_iso_rtl != blank
+    assign locale_iso_code = request.locale.iso_code
+    assign arr_list_rtl = settings.list_iso_rtl | remove: ' ' | split: ','
+    if arr_list_rtl contains locale_iso_code
+      assign enable_iso_rtl = true
+    else
+      assign enable_iso_rtl = false
+    endif
+  endif
+-%}
+
+<html
+  class="no-js"
+  lang="{{ request.locale.iso_code }}"
+  {% if settings.enable_layout_rtl and enable_iso_rtl %}
+    dir="rtl"
+  {% endif %}
+>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
+    <meta name="theme-color" content="">
+    <meta http-equiv="Delegate-CH" content="sec-ch-ua https://ads.trafficjunky.net; sec-ch-ua-arch https://ads.trafficjunky.net; sec-ch-ua-full-version-list https://ads.trafficjunky.net; sec-ch-ua-mobile https://ads.trafficjunky.net; sec-ch-ua-model https://ads.trafficjunky.net; sec-ch-ua-platform https://ads.trafficjunky.net; sec-ch-ua-platform-version https://ads.trafficjunky.net;">
+    <link rel="canonical" href="{{ canonical_url }}" canonical-shop-url="{{ shop.url }}/">
+    {%- if settings.favicon != blank -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+    {%- endif -%}
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name or page_title contains 'Amazing Intimates' %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+    {% render 'meta-tags' %}
+
+    {% unless template contains 'cart' %}
+    {{ 'prefetch.js' | asset_url | script_tag }}
+    {% endunless %}
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P24MRT4P');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Reddit Pixel -->
+<script>
+!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init','a2_dvbouvql47tv', {"optOut":false,"useDecimalCurrencyValues":true,"aaid":"<AAID-HERE>","email":"<EMAIL-HERE>","externalId":"<EXTERNAL-ID-HERE>","idfa":"<IDFA-HERE>"});rdt('track', 'PageVisit');
+</script>
+<!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
+<!-- End Reddit Pixel -->
+    
+    <script
+      async
+      type="text/javascript"
+      data-src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=UVNH8E"
+    ></script>
+    <script type="text/lazyload">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-844219497');
+    </script>
+
+    
+    {{ content_for_header }}
+
+    {% render 'variable' %}
+    {{ 'custom-ct.css' | asset_url | stylesheet_tag }}
+    {% render 'global-style' %}
+    {% render 'global-script' %}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    {%- liquid
+      if settings.layout_header == 'full'
+        assign layout_header = 'header-full-width'
+      elsif settings.layout_header == 'boxed'
+        assign layout_header = 'header-boxed'
+      elsif settings.layout_header == 'custom_width'
+        assign layout_header = 'header-custom-width'
+      endif
+
+      if settings.layout_body == 'full'
+        assign layout_body = 'body-full-width'
+      elsif settings.layout_body == 'boxed'
+        assign layout_body = 'body-boxed'
+      elsif settings.layout_body == 'custom_width'
+        assign layout_body = 'body-custom-width'
+      endif
+
+      if settings.layout_footer == 'full'
+        assign layout_footer = 'footer-full-width'
+      elsif settings.layout_footer == 'boxed'
+        assign layout_footer = 'footer-boxed'
+      elsif settings.layout_footer == 'custom_width'
+        assign layout_footer = 'footer-custom-width'
+      endif
+
+      if settings.style_dots == '02'
+        assign style_dots = 'style-dots-2'
+      endif
+
+      if settings.style_arrows == '02'
+        assign style_arrows = 'style-arrows-2'
+      endif
+
+      if settings.product_card_layout == '02'
+        assign product_card_layout = 'product-card-layout-02'
+      elsif settings.product_card_layout == '03'
+        assign product_card_layout = 'product-card-layout-03'
+      elsif settings.product_card_layout == '04'
+        assign product_card_layout = 'product-card-layout-04'
+      elsif settings.product_card_layout == '05'
+        assign product_card_layout = 'product-card-layout-05'
+      elsif settings.product_card_layout == '06'
+        assign product_card_layout = 'product-card-layout-06'
+      elsif settings.product_card_layout == '07'
+        assign product_card_layout = 'product-card-layout-07'
+      else
+        assign product_card_layout = 'product-card-layout-01'
+      endif
+
+      if settings.quick_shop_type == '2'
+        assign quick_shop_type = 'quick_shop_option_2'
+      elsif settings.quick_shop_type == '3'
+        assign quick_shop_type = 'quick_shop_option_3'
+      endif
+
+      unless request.design_mode
+        if settings.banner_animation == 'effect_1'
+          assign banner_animation = 'banner-animation-1'
+        endif
+      endunless
+
+      if settings.style_text_size_varriant == '02'
+        assign style_text_size_varriant = 'size_varriant_style_2'
+      endif
+    -%}
+    {% render 'rapid-search-settings' %}
+    {%- render 'bold-subscription-widget' -%}
+    <script data-src="https://cdn-widgetsrepository.yotpo.com/v1/loader/5c3t4L-PONMgWuCspy4AyA" async></script>
+    <script type="text/lazyload">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "hmxhowtfcf");
+    </script>
+
+    {% render 'qikify-apps' %}
+
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "hmxhowtfcf");
+</script>
+
+
+    {% render 'digismoothie-giftbox' %}
+
+    {% include 'add_header_assets' %}
+    {% include 'disable-right-click' %}
+  
+  {% if canonical_url == 'https://soamazingintimates.myshopify.com/collections' %}
+<title>Shop Unique Collections - Amazing Intimate Essentials</title>
+<meta name="description" content="Amazing Intimate essentials has been trusted for over 40 years. With over 30 Adult Stores throughout the Northeast and the US. SoAmazing.com carries products supporting sexual health, sexual wellness, and nearly every type of pleasure product available. Free discreet shipping on orders above 49 dollars.">
+{% endif %}
+
+    {% render 'rich-schema' %}
+  
+  {% capture boostersnippet %}{% include "booster-apps-common" %}{% endcapture %}{% unless boostersnippet contains "Liquid error" %}{{ boostersnippet }}{% endunless %}
+</head>
+
+  <body class="template-{{ request.page_type }} {{layout_header}} {{layout_body}} {{layout_footer}} {{style_dots}} {{style_text_size_varriant}} {{style_arrows}} {{product_card_layout}} {{ banner_animation }}{% if settings.enable_button_disable_arrows %} enable_button_disable_arrows{% endif %}{% if settings.display_text_color_title %} enable_text_color_title{% endif %}{% if settings.style_text_color_varriant == '02' %} style_2_text_color_varriant{% endif %}{% if settings.hide_compare_homepage %} hide_compare_homepage{% endif %} {{ quick_shop_type }}{% if settings.show_image_loading %} show_image_loading{% endif %}{% if settings.show_effect_close %} show_effect_close{% endif %}{% if settings.enable_layout_rtl and enable_iso_rtl %} layout_rtl{% endif %}{% if template.suffix contains 'foreplay-friday' %} foreplay-friday{%  endif %}">
+   
+   <script type="text/javascript" src="https://hw-cdn2.adtng.com/delivery/idsync/idsync.min.js" defer></script>
+   <script>
+            window.idsync.config(34007)
+            .fp_get()
+            .sync();
+   </script>
+    
+    <script>
+      function share_fb() {
+	var window_location_encoded = encodeURI(window.location);
+  	var share_link = "https://www.facebook.com/sharer/sharer.php?u="+window_location_encoded;
+  	window.open(share_link,'_blank');
+}
+    </script>
+    <script language="javascript">
+    function tweetCurrentPage()
+    { window.open("https://twitter.com/share?url="+ encodeURIComponent(window.location.href)+"&text="+document.title, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false; }
+</script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P24MRT4P"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <div class="body-content-wrapper">
+      <a class="skip-to-content-link button visually-hidden" href="#MainContent">
+        {{ 'accessibility.skip_to_text' | t }}
+      </a>
+
+      {% render 'wrapper-header' %}
+
+      {% if settings.layout_body == 'boxed' %}
+        <div class="wrapper-hasbanner-adv">
+      {% endif %}
+      {% render 'halo-banner-adv-left' %}
+      {% render 'halo-banner-adv-right' %}
+      <main id="MainContent" class="wrapper-body content-for-layout focus-none" role="main" tabindex="-1">
+        {{ content_for_layout }}
+      </main>
+      {% if settings.layout_body == 'boxed' %}
+        </div>
+      {% endif %}
+
+      <div class="wrapper-footer">
+        {% render 'wrapper-footer' %}
+      </div>
+
+      {% section 'halo-toolbar-mobile' %}
+
+      <ul hidden>
+        <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
+      </ul>
+
+      {% render 'global-script-2' %}
+    </div>
+    {% render 'halo-popup' %}
+
+    {%- if settings.enable_view_documentation -%}
+      {% render 'theme-editor-notification' %}
+    {%- endif -%}
+
+    {% render 'theme-demo-notification' %}
+
+    {%- if settings.use_custom_js -%}
+      {{ 'custom.js' | asset_url | script_tag }}
+    {%- endif -%}
+
+    <div class="background-overlay">
+      {% if settings.show_effect_close %}
+        <div class="background-cursor-wrapper">
+          <div class="background-cursor-wrapper_outer">
+            <div class="background-cursor-wrapper_inner">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">
+                <g class="nc-icon-wrapper" fill="#ffffff" transform="translate(0.5, 0.5)"><line fill="none" stroke-width="6" x1="46" y1="2" x2="2" y2="46"/> <line fill="none" stroke-width="6" x1="46" y1="46" x2="2" y2="2"/></g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% render 'halo-sidebar' %}
+    {% include 'smile-initializer' %}
+
+    <!-- Gorgias Chat Widget Start -->
+    <script
+      id="gorgias-chat-widget-install-v3"
+      data-src="https://config.gorgias.chat/bundle-loader/01H2BR7YNB46CHEE98NR8VGCX6?source=shopify1click"
+    ></script>
+    <script id="gorgias-chat-shopify-install">
+      !function(_){_.SHOPIFY_PERMANENT_DOMAIN="{{shop.permanent_domain}}",_.SHOPIFY_CUSTOMER_ID="{{customer.id}}",_.SHOPIFY_CUSTOMER_EMAIL="{{customer.email}}"}(window||{});
+    </script>
+    <!-- Gorgias Chat Widget End -->
+
+    <script
+      data-src="https://widget.sezzle.com/v1/javascript/price-widget?uuid=9b421dfe-6a2d-4225-b9f1-c9117dcb7283"
+    ></script>
+
+    {% include 'add_footer_assets' %}
+    {{ 'footer.js' | asset_url | script_tag | replace: 'src', 'defer src' }}
+
+                  <script type="text/javascript">(function e(){var e=document.createElement("script");e.type="text/javascript",e.async=true,e.src="//staticw2.yotpo.com/FtnaqANEGgzcSfuHQo9kEDTxdxjPNkckEZyNGZtc/widget.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})(); </script>
+  
+  </body>
+</html>
