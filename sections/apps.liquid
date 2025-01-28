@@ -1,64 +1,37 @@
-{%- liquid
+<div class="homepage-sections-wrapper text-link-animated" data-wetheme-section-id="{{ section.id }}">
+	{% if section.settings.include_margins %}
+        <div class="wrapper-padded">
+    {% endif %}
+        
+        {%- for block in section.blocks -%}
+            {% render block %}
+        {%- endfor -%}
 
-  assign section_padding = ''
-  if section.settings.section_padding == 'top'
-    assign section_padding = 'mb0'
-  elsif section.settings.section_padding == 'bottom'
-    assign section_padding = 'mt0'
-  elsif section.settings.section_padding == 'none'
-    assign section_padding = 'mt0 mb0'
-  endif
-
--%}
-<div class="{% unless section.settings.full_width %}row{% endunless %} global__section global__section--margin {{ section_padding }}">
-  {%- for block in section.blocks -%}
-    {% render block %}
-  {%- endfor -%}
+    {% if section.settings.include_margins %}
+        </div>
+    {% endif %}
 </div>
-
+  
 {% schema %}
 {
-  "name": "Apps",
+  "name": "t:sections.apps.name",
   "tag": "section",
   "settings": [
     {
       "type": "checkbox",
-      "id": "full_width",
-      "label": "Full width"
-    },
-    {
-      "type": "select",
-      "id": "section_padding",
-      "label": "Section spacing",
-      "options": [
-        {
-          "value": "top",
-          "label": "Top"
-        },
-        {
-          "value": "bottom",
-          "label": "Bottom"
-        },
-        {
-          "value": "both",
-          "label": "Both"
-        },
-        {
-          "value": "none",
-          "label": "None"
-        }
-      ],
-      "default": "both"
+      "id": "include_margins",
+      "default": true,
+      "label": "t:sections.apps.settings.include_margins.label"
     }
   ],
   "blocks": [
-  {
-    "type": "@app"
-  }
+    {
+      "type": "@app"
+    }
   ],
   "presets": [
-  {
-      "name": "Apps"
+    {
+      "name": "t:sections.apps.presets.name"
     }
   ]
 }

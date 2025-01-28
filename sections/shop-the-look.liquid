@@ -1,499 +1,425 @@
-{%- liquid
+{{ 'section-shop-the-look.min.css' | asset_url | stylesheet_tag }}
 
-  assign section_padding = ''
-  if section.settings.section_padding == 'top'
-    assign section_padding = 'mb0'
-  elsif section.settings.section_padding == 'bottom'
-    assign section_padding = 'mt0'
-  elsif section.settings.section_padding == 'none'
-    assign section_padding = 'mt0 mb0'
-  endif
+{% if section.blocks.size > 0 %}
+  <safe-load-scripts class="hidden">
+    <script src="{{ 'component-shop-the-look.js' | asset_url }}" type="module" defer="defer" data-flow-load-key="component-shop-the-look"></script>
+  </safe-load-scripts>
 
-  assign title = section.settings.title | escape
+  <style>
+    .shop-the-look--{{ section.id }} .shop-the-look__image-container .swiper-slide img,
+    .shop-the-look--{{ section.id }} .shop-the-look__image-container .swiper-slide svg {
+      aspect-ratio: {{ section.settings.image_aspect_ratio }};
+    }
+  </style>
 
--%}
+  {% assign no_of_placeholder_products_to_show = 3 %}
+{% endif %}
 
 <section
-  class="shop__thelook global__section global__section--margin {{ section_padding }}"
-  data-section-id="{{ section.id }}"
-  data-section-type="shop-the-look"
-  data-aos="{{ settings.scroll_animation }}"
->
-  {% if section.settings.title != blank %}
-    <div class="section-title row grid__wrapper pl0 pr0">
-      <h2 class="span-12 auto">
-        {{ title }}
-      </h2>
+  class="shop-the-look--{{ section.id }} shop-the-look__container homepage-sections-wrapper--{{ section.settings.colors }}{% if request.visual_preview_mode %} animated fadeInUp{% else %} show-on-scroll{% endif %}"
+  data-wetheme-section-type="shop-the-look"
+  data-wetheme-section-id="{{ section.id }}"
+  >
+
+  {% comment %} Replace the below code block with section header snippet once available {% endcomment %}
+  {% if section.settings.title != blank or section.settings.description != blank %}
+    <div class="shop-the-look__header text-link-animated">
+      {% if section.settings.title != blank %}
+        <h2 class="homepage-sections--title">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <div class="rte homepage-sections--description">{{ section.settings.description }}</div>
+      {% endif %}
     </div>
   {% endif %}
-  {% if section.settings.full_width %}<div class="gridlock-fluid"><div class="row">{% endif %}
-  <div class="row grid__wrapper pl0 pr0{% if section.settings.full_width %} edge{% endif %}">
-  {%- assign image_size = '1200x' -%}
-  {% for block in section.blocks %}
-    {%- liquid
 
-      case block.settings.image_width
-        when '25%'
-          assign image_width = 'span-3'
-          assign md_render = 'calc(100vw / 4)'
-          assign lg_render = 'calc(1600px / 4)'
-        when '33%'
-          assign image_width = 'span-4'
-          assign md_render = 'calc(100vw / 3)'
-          assign lg_render = 'calc(1600px / 3)'
-        when '50%'
-          assign image_width = 'span-6'
-          assign md_render = 'calc(100vw / 2)'
-          assign lg_render = 'calc(1600px / 2)'
-        when '66%'
-          assign image_width = 'span-8'
-          assign md_render = 'calc(100vw * 0.6667)'
-          assign lg_render = 'calc(1600px * 0.6667)'
-        when '75%'
-          assign image_width = 'span-9'
-          assign md_render = 'calc(100vw * 0.75)'
-          assign lg_render = 'calc(1600px * 0.75)'
-        when '100%'
-          assign image_width = 'span-12'
-          assign md_render = '100vw'
-          assign lg_render = '100vw'
-      endcase
+  {% if section.blocks.size > 0 %}
+    <shop-the-look class="shop-the-look__content" data-section-id="{{ section.id }}">
+      <div class="shop-the-look__image-container">
 
-      assign has_image = false
-      unless block.settings.image == blank
-        assign has_image = true
-      endunless
+        {% comment %} Main image swiper (one slide per block) {% endcomment %}
+        <div class="swiper" data-image-swiper>
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
 
-    -%}
-    {% case block.type %}
-    {% when 'image' %}
+              {% comment %} Keep track of how many products added to inform number of hotspots to add (if none added, show 3 placeholder hotspots) {% endcomment %}
+              {%- liquid
+                assign block_index = forloop.index0
+                assign products_count = 0
 
-      <div class="shop__thelook-image-{{ block.id }} stl__item {{ image_width }} sm-span-12 auto promo-{{ block.id }}" {{ block.shopify_attributes }}>
-        <div class="image-inner">
-          {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
-            {% if block.settings.image != blank %}
-              {% render 'basic-responsive-image',
-                type: block.settings.image,
-                sm_render: '300px',
-                md_render: md_render,
-                lg_render: lg_render,
-                width: 2000
-              %}
-            {% else %}
-              <div class="onboard">
-                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-              </div>
-            {% endif %}
-          {% if block.settings.link != blank %}</a>{% endif %}
-        </div>
+                for product_index in (1..4)
+                  assign product_id = 'product_' | append: product_index
 
-        {% for n in (1..5) %}
-          {%- liquid
+                  if block.settings[product_id] != blank
+                    assign products_count = products_count | plus: 1
+                  endif
+                endfor
 
-            assign product = "shop__thelook_product_" | append: n
-            assign product = all_products[block.settings[product]] | default: false
-            assign hotspot_horizontal =  'hotspot_horizontal_' | append: n
-            assign hotspot_horizontal = block.settings[hotspot_horizontal] | default: false
-            assign hotspot_vertical =  'hotspot_vertical_' | append: n
-            assign hotspot_vertical = block.settings[hotspot_vertical] | default: false
+                if products_count == 0
+                  assign products_count = no_of_placeholder_products_to_show
+                endif
+              -%}
 
-          -%}
+              <div class="swiper-slide" data-swiper-slide-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+                <div class="shop-the-look__slide-inner">
 
-          {% if product != false %}
-            <div class="product-{{ block.id }} hotspot hotspot-{{ n }}">
-              <div class="product-container">
-                <div class="hover-{{ n }} product-hotspot product-{{ product.id }}">
-                  <a href="{{ product.url}}">
-                    <div class="prod-image">
-                      <a href="{{ product.url }}" title="{{ product.title | escape }}">
-                        <div class="reveal">
-                          {% render 'basic-responsive-image', type: product.featured_media, width: 500 %}
-                        </div>
-                      </a>
+                  {% if block.settings.image %}
+                    {% render 'responsive-image' with block.settings.image %}
+                  {% else %}
+                    {% comment %} Show different placeholder images per block {% endcomment %}
+                    {% capture placeholder_svg_int %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                    {% assign placeholder_svg = 'collection-' | append: placeholder_svg_int %}
+                    <div class="shop-the-look__placeholder-image">
+                      {{ placeholder_svg | placeholder_svg_tag: 'icon icon--placeholder' }}
                     </div>
-                    <div class="product-details">
-                      <h4 class="product-title">{{ product.title }}</h4>
-                      <div class="price">
-                        {% if product.price < product.compare_at_price %}
-                        <div class="onsale">{{ product.price | money }}</div>
-                        <div class="was">{{ product.compare_at_price | money }}</div>
-                        {% else %}
-                        <div class="prod-price">{% if product.price_varies %} {{ 'products.general.from' | t }} {{ product.price_min | money }} - {{ product.price_max | money }} {% else %}{{ product.price | money }}{% endif %}</div>
-                        {% endif %}
-                      </div>
-                    </div>
-                  </a>
-                  {% style %}
-                    .product-{{ block.id }} .hover-{{ n }} {
-                      position: absolute;
-                      width: 180px;
-                      background: white;
-                      border: 1px solid #eee;
-                      top: 17px;
-                      left: -81px;
-                      display: none;
-                      z-index: 5;
-                      padding: 10px;
-                    }
-                    .product-{{ block.id }}.hotspot-{{ n }} {
-                      position: absolute;
-                      left: {{ hotspot_horizontal }}%;
-                      top: {{ hotspot_vertical }}%;
-                      cursor: pointer;
-                    }
-                      {% assign color = 'hotspot_color_' | append: n %}
-                      {% assign color = block.settings[color] %}
-                    .product-{{ block.id }}.hotspot-{{ n }}:after {
-                      content: "";
-                      background-color: {{ color }};
-                      width: 25px;
-                      height: 25px;
-                      border: 3px solid white;
-                      border-radius: 50%;
-                      opacity: 0.6;
-                      display: block;
-                      pointer-events: all;
-                    }
-                    .shop__thelook-image-{{ block.id }}:hover .product-{{ block.id }}.hotspot-{{ n }}:after {
-                      border: 3px solid white;
-                      transform: scale(1.2);
-                      animation: pulse 1s infinite;
-                      animation-timing-function: linear;
-                    }
-                    @keyframes pulse {
-                      0% { transform: scale(1.2); }
-                      50% { transform: scale(1.5);
-                      00% { transform: scale(1.2); }
-                      }
-                    }
-                    .product-{{ block.id }}.hotspot-{{ n }}:hover .hover-{{ n }} {
-                      display: block;
-                    }
-                  {% endstyle %}
+                  {% endif %}
+
+                  {% comment %} Hotspots {% endcomment %}
+                  {% for product_index in (1..products_count) %}
+                    {% capture horizontal_position %}hotspot_horizontal_position_{{ product_index }}{% endcapture %}
+                    {% capture vertical_position %}hotspot_vertical_position_{{ product_index }}{% endcapture %}
+                    <button
+                      data-hotspot-button
+                      data-block-index="{{ block_index }}"
+                      data-product-index="{{ product_index }}"
+                      class="shop-the-look__hotspot"
+                      type="button"
+                      style="--hotspot-vertical-position: {{ block.settings[vertical_position] }}%; --hotspot-horizontal-position: {{ block.settings[horizontal_position] }}%;"
+                      aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-label="{{ 'general.accessibility.navigation.go_to_item' | t: number: product_index }}"
+                    >
+                      <span class="shop-the-look__hotspot-icon" style="--hotspot-color: {{ block.settings.hotspot_color }}"></span>
+                    </button>
+                  {% endfor %}
+
                 </div>
               </div>
+            {% endfor %}
           </div>
-
-          {% endif %}
-       {% endfor %}
+          {% render 'swiper-pagination-arrows' %}
+        </div>
       </div>
-    {% when 'section_clear' %}
-        <div class="clear"></div>
-    {% endcase %}
 
-    {% if section.blocks.size == 0 %}
-      {% render 'no-blocks' %}
-    {% endif %}
+      {% comment %} 'View products' button on mobile {% endcomment %}
+      <div class="shop-the-look__open-modal-btn-container">
+        <button class="btn" type="button" data-open-modal-btn>{{ 'sections.shop_the_look.view_products' | t }}</button>
+      </div>
 
-  {% endfor %}
+      <div class="shop-the-look__product-card-container" data-modal>
 
-  </div>
-  {% if section.settings.full_width %}</div></div>{% endif %}
+        {% comment %} Keep track of how many products added to inform number of product cards to show (if none added, show placeholder product cards) {% endcomment %}
+        {% for block in section.blocks %}
+          {%- liquid
+            assign products_count = 0
+            assign show_placeholder = false
+
+            for product_index in (1..4)
+              assign product_id = 'product_' | append: product_index
+
+              if block.settings[product_id] != blank
+                assign products_count = products_count | plus: 1
+              endif
+            endfor
+
+            if products_count == 0
+              assign show_placeholder = true
+              assign svg_index_offset = forloop.index0
+            endif
+
+            if products_count == 1
+              assign no_scrollbar = true
+            endif
+          -%}
+
+          {% comment %} Product card swiper (one swiper per block) {% endcomment %}
+          <div class="swiper shop-the-look__product-card-swiper" data-product-card-swiper data-block-index="{{ forloop.index0 }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+            <div class="swiper-wrapper{% unless no_scrollbar %} has-scrollbar{% endunless %}">
+              {% if show_placeholder %}
+
+                {% for product_index in (1..no_of_placeholder_products_to_show) %}
+                  {% comment %} Cycle through product placeholders, offsetting by 1 with each block iteration to match product placeholder type (eg. bag) to the collection placeholder type (eg. bag collection) {% endcomment %}
+                  {% assign svg_index = forloop.index0 | plus: svg_index_offset | modulo: 6 | plus: 1 %}
+                  {% capture svg_index_reversed %}{% cycle 6, 5, 4, 3, 2, 1 %}{% endcapture %}
+                  <div class="swiper-slide shop-the-look__placeholder-product-card" data-product-index="{{ product_index }}">
+                    {% render 'grid-view-item-placeholder', svg_index: svg_index, svg_index_reversed: svg_index_reversed, section_color_scheme: section.settings.colors %}
+                  </div>
+                {% endfor %}
+
+              {% else %}
+
+                {% for product_index in (1..products_count) %}
+                  {% capture product_id %}product_{{ product_index }}{% endcapture %}
+                    <div class="swiper-slide" data-product-index="{{ product_index }}">
+                      {% if block.settings[product_id] != blank %}
+                        {% comment %} Global product card {% endcomment %}
+                        {% render 'grid-view-item', product: block.settings[product_id], collection: null, enable_badges: settings.show_badges, grid_count_desktop: 3, grid_count_mobile: 1, section_color_scheme: section.settings.colors %}
+                      {% elsif request.design_mode %}
+                        {% comment %} If we're in the editor and a product setting has been missed, show a help message eg. 'Add a product: Product one' {% endcomment %}
+                        {% capture product_label_translation %}
+                          {% case product_index %}
+                            {% when 1 %}{{ 'sections.shop_the_look.product_one' | t }}
+                            {% when 2 %}{{ 'sections.shop_the_look.product_two' | t }}
+                            {% when 3 %}{{ 'sections.shop_the_look.product_three' | t }}
+                            {% when 4 %}{{ 'sections.shop_the_look.product_four' | t }}
+                          {% endcase %}
+                        {% endcapture %}
+                        <div class="shop-the-look__onboarding-product-prompt">
+                          <p>{{ 'general.onboarding.add_product' | t }}: {{ product_label_translation }}</p>
+                        </div>
+                      {% endif %}
+                    </div>
+                {% endfor %}
+
+              {% endif %}
+            </div>
+            <div class="swiper-scrollbar"></div>
+          </div>
+        {% endfor %}
+
+        {% comment %} Mobile modal close (X) button {% endcomment %}
+        <button type="button" data-close-modal-btn class="shop-the-look__modal-close icon-fallback-text standalone-icon--wrapper" aria-label="{{ 'general.accessibility.dismiss.close' | t }}">
+          <span class="fallback-text">{{ 'general.accessibility.dismiss.close' | t }}</span>
+          {% render 'theme-icon' with icon: 'close', iconSize: 20 %}
+        </button>
+      </div>
+    </shop-the-look>
+  {% endif %}
 </section>
-
 
 {% schema %}
 {
-  "name": "Shop the look",
-  "max_blocks": 40,
-  "settings":
-  [
+  "name": "t:sections.shop-the-look.name",
+  "max_blocks": 6,
+  "settings": [
     {
-      "type": "checkbox",
-      "id": "full_width",
-      "label": "Full width"
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:all.Heading",
+      "default": "Shop the look"
     },
     {
-      "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "Shop the Look"
+      "type": "richtext",
+      "id": "description",
+      "label": "t:all.Description"
     },
     {
       "type": "select",
-      "id": "section_padding",
-      "label": "Section spacing",
+      "id": "image_aspect_ratio",
+      "label": "t:all.Image_aspect_ratio",
+      "default": "auto",
       "options": [
         {
-          "value": "top",
-          "label": "Top"
+          "value": "auto",
+          "label": "t:all.Original"
         },
         {
-          "value": "bottom",
-          "label": "Bottom"
+          "value": "1 / 1",
+          "label": "t:all.Square_1_1"
         },
         {
-          "value": "both",
-          "label": "Both"
+          "value": "2 / 3",
+          "label": "t:all.Tall_2_3"
         },
         {
-          "value": "none",
-          "label": "None"
+          "value": "4 / 3",
+          "label": "t:all.Wide_4_3"
         }
-      ],
-      "default": "both"
+      ]
+    },
+    {
+      "type": "select",
+      "id": "colors",
+      "label": "t:all.Color_scheme",
+      "default": "white",
+      "options": [
+        {
+          "value": "white",
+          "label": "t:all.Minimal"
+        },
+        {
+          "value": "light",
+          "label": "t:all.Light"
+        },
+        {
+          "value": "accent",
+          "label": "t:all.Feature"
+        },
+        {
+          "value": "dark",
+          "label": "t:all.Dark"
+        }
+      ]
     }
   ],
-  "blocks":
-  [
+  "blocks": [
     {
-      "type": "image",
-      "name": "Image",
-      "settings":
-      [
+      "type": "look",
+      "name": "t:sections.shop-the-look.blocks.look.name",
+      "settings": [
         {
-          "type": "select",
-          "id": "image_width",
-          "label": "Image width",
-          "default": "33%",
-          "options":
-          [
-            {
-              "value": "25%",
-              "label": "25%"
-            },
-            {
-              "value": "33%",
-              "label": "33%"
-            },
-            {
-              "value": "50%",
-              "label": "50%"
-            },
-            {
-              "value": "66%",
-              "label": "66%"
-            },
-            {
-              "value": "75%",
-              "label": "75%"
-            },
-            {
-              "value": "100%",
-              "label": "100%"
-            }
-          ]
+          "type": "header",
+          "content": "t:all.Image"
         },
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image",
-          "info": "800px x 600px recommended if 3 per row"
-        },
-        {
-          "type": "header",
-          "content": "Product #1"
-        },
-        {
-          "type": "product",
-          "id": "shop__thelook_product_1",
-          "label": "Product"
-        },
-        {
-          "type": "range",
-          "id": "hotspot_horizontal_1",
-          "min": 1,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "label": "Hotspot horizontal position",
-          "default": 40
-        },
-        {
-          "type": "range",
-          "id": "hotspot_vertical_1",
-          "min": 1,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "label": "Hotspot vertical position",
-          "default": 40
+          "label": "t:all.Image"
         },
         {
           "type": "color",
-          "id": "hotspot_color_1",
-          "label": "Hotspot color",
-          "default": "#000"
+          "id": "hotspot_color",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_color.label",
+          "default": "#FFFFFF"
         },
         {
           "type": "header",
-          "content": "Product #2"
+          "content": "t:sections.shop-the-look.blocks.look.settings.header.product_one"
         },
         {
           "type": "product",
-          "id": "shop__thelook_product_2",
-          "label": "Product"
+          "id": "product_1",
+          "label": "t:all.Product"
         },
         {
           "type": "range",
-          "id": "hotspot_horizontal_2",
-          "min": 1,
+          "id": "hotspot_horizontal_position_1",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_horizontal_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot horizontal position",
-          "default": 40
+          "default": 25,
+          "unit": "%"
         },
         {
           "type": "range",
-          "id": "hotspot_vertical_2",
-          "min": 1,
+          "id": "hotspot_vertical_position_1",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_vertical_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot vertical position",
-          "default": 40
-        },
-        {
-          "type": "color",
-          "id": "hotspot_color_2",
-          "label": "Hotspot color",
-          "default": "#000"
+          "default": 25,
+          "unit": "%"
         },
         {
           "type": "header",
-          "content": "Product #3"
+          "content": "t:sections.shop-the-look.blocks.look.settings.header.product_two"
         },
         {
           "type": "product",
-          "id": "shop__thelook_product_3",
-          "label": "Product"
+          "id": "product_2",
+          "label": "t:all.Product"
         },
         {
           "type": "range",
-          "id": "hotspot_horizontal_3",
-          "min": 1,
+          "id": "hotspot_horizontal_position_2",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_horizontal_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot horizontal position",
-          "default": 40
+          "default": 25,
+          "unit": "%"
         },
         {
           "type": "range",
-          "id": "hotspot_vertical_3",
-          "min": 1,
+          "id": "hotspot_vertical_position_2",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_vertical_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot vertical position",
-          "default": 40
-        },
-        {
-          "type": "color",
-          "id": "hotspot_color_3",
-          "label": "Hotspot color",
-          "default": "#000"
+          "default": 75,
+          "unit": "%"
         },
         {
           "type": "header",
-          "content": "Product #4"
+          "content": "t:sections.shop-the-look.blocks.look.settings.header.product_three"
         },
         {
           "type": "product",
-          "id": "shop__thelook_product_4",
-          "label": "Product"
+          "id": "product_3",
+          "label": "t:all.Product"
         },
         {
           "type": "range",
-          "id": "hotspot_horizontal_4",
-          "min": 1,
+          "id": "hotspot_horizontal_position_3",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_horizontal_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot horizontal position",
-          "default": 40
+          "default": 75,
+          "unit": "%"
         },
         {
           "type": "range",
-          "id": "hotspot_vertical_4",
-          "min": 1,
+          "id": "hotspot_vertical_position_3",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_vertical_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot vertical position",
-          "default": 40
-        },
-        {
-          "type": "color",
-          "id": "hotspot_color_4",
-          "label": "Hotspot color",
-          "default": "#000"
+          "default": 50,
+          "unit": "%"
         },
         {
           "type": "header",
-          "content": "Product #5"
+          "content": "t:sections.shop-the-look.blocks.look.settings.header.product_four"
         },
         {
           "type": "product",
-          "id": "shop__thelook_product_5",
-          "label": "Product"
+          "id": "product_4",
+          "label": "t:all.Product"
         },
         {
           "type": "range",
-          "id": "hotspot_horizontal_5",
-          "min": 1,
+          "id": "hotspot_horizontal_position_4",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_horizontal_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot horizontal position",
-          "default": 40
+          "default": 75,
+          "unit": "%"
         },
         {
           "type": "range",
-          "id": "hotspot_vertical_5",
-          "min": 1,
+          "id": "hotspot_vertical_position_4",
+          "label": "t:sections.shop-the-look.blocks.look.settings.hotspot_vertical_position.label",
+          "min": 0,
           "max": 100,
           "step": 1,
-          "unit": "%",
-          "label": "Hotspot vertical position",
-          "default": 40
-        },
-        {
-          "type": "color",
-          "id": "hotspot_color_5",
-          "label": "Hotspot color",
-          "default": "#000"
-        }
-      ]
-    },
-    {
-      "type": "section_clear",
-      "name": "Section Clear",
-      "settings":
-      []
-    }
-  ],
-  "presets":
-  [
-    {
-      "name": "Shop the look",
-      "blocks":
-      [
-        {
-          "type": "image"
-        },
-        {
-          "type": "image"
-        },
-        {
-          "type": "image"
+          "default": 75,
+          "unit": "%"
         }
       ]
     }
   ],
-  "templates":
-  [
-    "404",
-    "article",
-    "blog",
-    "cart",
-    "collection",
-    "list-collections",
-    "index",
-    "page",
-    "product",
-    "search"
-  ]
+  "presets": [
+    {
+      "name": "t:sections.shop-the-look.name",
+      "blocks": [
+        {
+          "type": "look",
+          "settings": {
+            "hotspot_horizontal_position_1": 30,
+            "hotspot_vertical_position_1": 40,
+            "hotspot_horizontal_position_2": 40,
+            "hotspot_vertical_position_2": 65
+          }
+        },
+        {
+          "type": "look",
+          "settings": {
+            "hotspot_vertical_position_1": 40,
+            "hotspot_horizontal_position_2": 60,
+            "hotspot_vertical_position_2": 30,
+            "hotspot_vertical_position_3": 60
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "footer",
+      "header"
+    ]
+  }
 }
 {% endschema %}

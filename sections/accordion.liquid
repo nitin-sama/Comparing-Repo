@@ -1,175 +1,121 @@
-{%- liquid
-  assign unique_id = section.id | slice: -7, 7
-  assign section_padding = ''
-  if section.settings.section_padding == 'top'
-    assign section_padding = 'mb0'
-  elsif section.settings.section_padding == 'bottom'
-    assign section_padding = 'mt0'
-  elsif section.settings.section_padding == 'none'
-    assign section_padding = 'mt0 mb0'
-  endif
-
--%}
+{{ 'section-accordion.min.css' | asset_url | stylesheet_tag: preload: true }}
+<noscript>{{ 'section-accordion.min.css' | asset_url | stylesheet_tag }}</noscript>
 
 <section
-  id="section-accordion--{{ section.id }}"
-  data-section-id="{{ section.id }}"
-  class="section-accordion section-accordion-{{ section.id }} global__section global__section--margin {{ section_padding }}"
-  data-aos="{{ settings.scroll_animation }}">
-
-    {% if section.settings.heading != blank %}
-      <div class="row">
-        <div class="section-title">
-          <h3>{{ section.settings.heading }}</h3>
+  class="homepage-sections-wrapper accordion--faq-wrapper accordion-faq--{{ section.id }} homepage-sections-wrapper--{{ section.settings.colors }}"
+  data-wetheme-section-type="accordion--faq"
+  data-wetheme-section-id="{{ section.id }}"
+>
+    <div class="accordion-container wrapper-padded">
+      {% unless section.settings.title == blank %}
+        <div class="title-bar custom-font">
+          <h2 class="homepage-sections--title">{{ section.settings.title }}</h2>
         </div>
-      </div>
-    {% endif %}
+      {% endunless %}
+      
+      {% for block in section.blocks %}
+        {% unless block.settings.text == blank and block.settings.question == blank %}
+          <div class="accordion-content" {{ block.shopify_attributes }}>
+            {% render 'collapsible-tab', icon: 'none', custom_icon: false, heading: block.settings.question, content: block.settings.text, open_close_icon: section.settings.faq_icon, open_by_default: false %}
+          </div>
+        {% endunless %}
+      {% endfor %}
+    </div>
 
-    <div
-      class="js-accordion c-accordion c-accordion--icon c-accordion--{{ unique_id }} c-accordion--custom-page"
-      id="c-accordion--{{ unique_id }}"
-      {% if section.settings.allow_multiple %}
-      data-accordion-allow-multiple
-      {% endif %}
-      style="max-width: 900px; margin: 0 auto;"
-    >
-
-      {% if section.blocks.size > 0 %}
-       {% for block in section.blocks %}
-
-         {%- liquid
-
-            assign accordion_content_class = 'c-accordion__panel--'
-            assign accordion_content_id = accordion_content_class | append: unique_id | append: '-' | append: forloop.index
-
-         -%}
-
-         {% if block.settings.heading != blank %}
-            <button
-              class="js-accordion-header c-accordion__header"
-              aria-expanded="false"
-              aria-controls="{{ accordion_content_id }}"
-              data-toggle="accordion">
-              {{ block.settings.heading }}
-                <span class="dropdown-arrow">
-                  {% render 'snip-icons',
-                     wrapper: '.c-accordion__header',
-                     type: 'apollo',
-                     icon: 'down-carrot',
-                     classes: 'c-accordion__header--icon vib-center',
-                     size: '6px',
-                     fill: 'var(--text-color)',
-                     hover: 'var(--text-color)' %}
-                </span>
-            </button>
-             <div
-              class="c-accordion__panel {{ accordion_content_id }} rte"
-              id="{{ accordion_content_id }}"
-              data-parent="#c-accordion--{{ unique_id }}">
-              <div class="c-accordion__inner">
-               <div class="rte">
-                 {{ block.settings.content }}
-               </div>
-              </div>
-             </div>
-         {% endif %}
-       {% endfor %}
-      {% else %}
-        <div class="rte">
-          <p>Add accordiond content in the theme editor.</p>
-        </div>
-      {% endif %}
-     </div>
 </section>
 
 {% schema %}
 {
-  "name": "Accordion",
-  "settings":
-  [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "FAQs"
-    },
-    {
-      "type": "checkbox",
-      "id": "allow_multiple",
-      "label": "Allow multiple accordions open at one time",
-      "default": false
-    },
+  "name": "t:sections.accordion.name",
+  "class": "main-accordion--wrapper",
+  "settings": [
     {
       "type": "select",
-      "id": "section_padding",
-      "label": "Section spacing",
+      "id": "colors",
+      "label": "t:all.Color_scheme",
+      "default": "white",
       "options": [
         {
-          "value": "top",
-          "label": "Top"
+          "value": "white",
+          "label": "t:all.Minimal"
         },
         {
-          "value": "bottom",
-          "label": "Bottom"
+          "value": "light",
+          "label": "t:all.Light"
         },
         {
-          "value": "both",
-          "label": "Both"
+          "value": "accent",
+          "label": "t:all.Feature"
         },
         {
-          "value": "none",
-          "label": "None"
+          "value": "dark",
+          "label": "t:all.Dark"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:all.Heading",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "radio",
+      "id": "faq_icon",
+      "label": "t:all.Icon_style",
+      "options": [
+        {
+          "value": "plus_minus",
+          "label": "t:all.Plus_minus"
+        },
+        {
+          "value": "caret",
+          "label": "t:all.Caret"
         }
       ],
-      "default": "both"
+      "default": "plus_minus"
     }
   ],
-  "blocks":
-  [
+  "blocks": [
     {
-      "type": "panel",
-      "name": "Panel",
-      "settings":
-      [
+      "type": "tab_content",
+      "name": "t:sections.accordion.blocks.tab_content.name",
+      "settings": [
         {
           "type": "text",
-          "id": "heading",
-          "label": "Heading",
-          "default": "Heading"
+          "id": "question",
+          "label": "t:all.Heading",
+          "default": "Place your question or heading here"
         },
         {
           "type": "richtext",
-          "id": "content",
-          "label": "Content",
-          "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+          "id": "text",
+          "label": "t:all.Text",
+          "default": "<p>Here you can place an explanation or answer to the question.</p>"
         }
       ]
     }
   ],
-  "presets":
-  [
+  "presets": [
     {
-      "name": "Accordion",
-      "blocks":
-      [
+      "name": "t:sections.accordion.presets.name",
+      "blocks": [
         {
-          "type": "panel"
+          "type": "tab_content"
         },
         {
-          "type": "panel"
+          "type": "tab_content"
         },
         {
-          "type": "panel"
+          "type": "tab_content"
         }
       ]
     }
   ],
-  "templates":
-  [
-    "404",
-    "article",
-    "page",
-    "product"
-  ]
+  "disabled_on": {
+    "groups": [
+      "header"
+    ]
+  }
 }
 {% endschema %}

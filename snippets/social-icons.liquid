@@ -1,135 +1,86 @@
-{%- liquid
+{% comment %}
+  Accepts the following options:
+  - wrapper_classes: Add Additional classes to icons' ul wrapper
+  - icon_wrapper_classes: Add additional classes to svg's wrapper
+  - icon_classes: Additional classes to add to the icon
+  - icon_width: The width of the icon
+  - icon_height: The height of the icon
+  - icon_fill: The fill color of the icon
+{% endcomment %}
 
-  if hover_color == blank
-    assign hover_color = fill_color
-  endif
+{% if
+  settings.sm_facebook_link != blank or
+  settings.sm_x_link != blank or
+  settings.sm_youtube_link != blank or
+  settings.sm_flickr_link != blank or
+  settings.sm_pinterest_link != blank or
+  settings.sm_instagram_link != blank or
+  settings.sm_tumblr_link != blank or
+  settings.sm_pinterest_link != blank or
+  settings.sm_youtube_link != blank or
+  settings.sm_vimeo_link != blank or
+  settings.sm_flickr_link != blank or
+  settings.sm_snapchat_link != blank or
+  settings.sm_houzz_link != blank or
+  settings.sm_linkedin_link != blank or
+  settings.sm_tiktok_link != blank %}
 
--%}
-<ul class="social-icons__wrapper">
-  {% if settings.facebook_url != blank %}
-    <li>
-      <a href="{{ settings.facebook_url }}" target="_blank" aria-label="Facebook">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'facebook',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+<ul id="sm-icons" class="clearfix {{ wrapper_classes }}">
+
+  {% if settings.sm_facebook_link != blank %}
+    <li id="sm-facebook"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_facebook_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.facebook' | t }}">{% render 'theme-icon' with icon: 'facebook', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.instagram-id != blank %}
-    <li>
-      <a href="//instagram.com/{{ settings.instagram-id }}" target="_blank" aria-label="Instagram">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'instagram',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+
+  {% if settings.sm_x_link != blank %}
+    <li id="sm-x"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_x_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.x' | t }}">{% render 'theme-icon' with icon: 'x', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.twittername != blank %}
-    <li>
-      <a href="{{ settings.twittername }}" target="_blank" aria-label="Twitter">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'twitter',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+
+  {% if settings.sm_instagram_link != blank %}
+    <li id="sm-instagram"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_instagram_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.instagram' | t }}">{% render 'theme-icon' with icon: 'instagram', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.pinterest_url != blank %}
-    <li>
-      <a href="{{ settings.pinterest_url }}" target="_blank" aria-label="Pinterest">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'pinterest',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+
+  {% if settings.sm_tumblr_link != blank %}
+    <li id="sm-tumblr"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_tumblr_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.tumblr' | t }}">{% render 'theme-icon' with icon: 'tumblr', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.tumblr_url != blank %}
-    <li>
-      <a href="{{ settings.tumblr_url }}" target="_blank" aria-label="Tumblr">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'tumblr',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+
+  {% if settings.sm_pinterest_link != blank %}
+    <li id="sm-pinterest"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_pinterest_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.pinterest' | t }}">{% render 'theme-icon' with icon: 'pinterest', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.youtube_url != blank %}
-    <li>
-      <a href="{{ settings.youtube_url }}" target="_blank" aria-label="Youtube">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'youtube',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+
+  {% if settings.sm_youtube_link != blank %}
+    <li id="sm-youtube"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_youtube_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.youtube' | t }}">{% render 'theme-icon' with icon: 'youtube', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.snapchat_id != blank %}
-    <li>
-      <a href="//snapchat.com/add/{{ settings.snapchat_tid }}" target="_blank" aria-label="Snapchat">
-        {% render 'snip-icons',
-           wrapper: wrapper,
-           type: 'social',
-           icon: 'snapchat',
-           classes: 'share-icons--icon',
-           size: '14px',
-           fill: fill_color,
-           hover: hover_color %}
-      </a>
-    </li>
+
+  {% if settings.sm_vimeo_link != blank %}
+    <li id="sm-vimeo"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_vimeo_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.vimeo' | t }}">{% render 'theme-icon' with icon: 'vimeo', iconClasses: icon_classes %}</a></li>
   {% endif %}
-  {% if settings.tiktok != blank %}
-  <li>
-    <a href="{{ settings.tiktok }}" target="_blank" title="Tiktok">
-      {% render 'snip-icons',
-       wrapper: wrapper,
-       type: 'social',
-       icon: 'tiktok',
-       classes: 'share-icons--icon',
-       size: '14px',
-       fill: fill_color,
-       hover: hover_color %}
+
+  {% if settings.sm_flickr_link != blank %}
+    <li id="sm-flickr"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_flickr_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.flickr' | t }}">{% render 'theme-icon' with icon: 'flickr', iconClasses: icon_classes %}</a></li>
+  {% endif %}
+
+  {% if settings.sm_snapchat_link != blank %}
+    <li id="sm-snapchat"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_snapchat_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.snapchat' | t }}">{% render 'theme-icon' with icon: 'snapchat', iconClasses: icon_classes %}</a></li>
+  {% endif %}
+
+  {% if settings.sm_houzz_link != blank %}
+    <li id="sm-houzz"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_houzz_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.houzz' | t }}">{% render 'theme-icon' with icon: 'houzz', iconClasses: icon_classes %}</a></li>
+  {% endif %}
+
+  {% if settings.sm_linkedin_link != blank %}
+    <li id="sm-linkedin"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_linkedin_link }}" target="_blank" aria-label="{{ 'general.accessibility.social_media.linkedin' | t }}">{% render 'theme-icon' with icon: 'linkedin', iconClasses: icon_classes %}</a></li>
+  {% endif %}
+
+  {% if settings.sm_tiktok_link != blank %}
+    <li id="sm-tiktok"><a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="{{ settings.sm_tiktok_link }}" target="_blank" class="tiktok-wrapper" aria-label="{{ 'general.accessibility.social_media.tiktok' | t }}">{% render 'theme-icon' with icon: 'tiktok', iconClasses: icon_classes %}</a></li>
+  {% endif %}
+
+  <li id="sm-email">
+    <a class="standalone-icon--wrapper {{ icon_wrapper_classes }}" href="mailto:orders@thirtyyears.com" target="_blank">
+      <svg data-name="1-Email" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20"><path d="M29 4H3a3 3 0 0 0-3 3v18a3 3 0 0 0 3 3h26a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-.72 2L16 14.77 3.72 6zM30 25a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.23l13.42 9.58a1 1 0 0 0 1.16 0L30 7.23z"/></svg>
     </a>
   </li>
-{% endif %}
-{% if settings.etsy != blank %}
-  <li>
-    <a href="{{ settings.etsy }}" target="_blank" title="Etsy">
-      {% render 'snip-icons',
-       wrapper: wrapper,
-       type: 'social',
-       icon: 'etsy',
-       classes: 'share-icons--icon',
-       size: '14px',
-       fill: fill_color,
-       hover: hover_color %}
-    </a>
-  </li>
-{% endif %}
+
 </ul>
+
+{% endif %}
