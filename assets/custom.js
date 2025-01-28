@@ -1,9 +1,11 @@
 $(document).ready(function () {
   // Sticky Add To Cart JS Start
-  /*var $paymentButtonsWrapper = $('.template-product .product-section');
+  var $paymentButtonsWrapper = $('.template-product  .product-section');
+  //var $paymentButtonsWrapper = $('.template-product .collage-builder__section-wrapper');
   
   if ($paymentButtonsWrapper.length > 0) {
-    var btnOffset = $paymentButtonsWrapper.offset().top + $paymentButtonsWrapper.outerHeight();
+    var btnOffset = $paymentButtonsWrapper.offset().top + $paymentButtonsWrapper.outerHeight() - 200;
+    //var btnOffset = $paymentButtonsWrapper.offset().top;
     console.log(btnOffset);
     
    $(window).scroll(function () {
@@ -15,25 +17,24 @@ $(document).ready(function () {
     });
   } else {
     console.log('.paymentButtonsWrapper not found!');
-  }*/
+  }
 
   // Homepage Collection List Carousel
-  $(".collection-grid-carousel").slick({
+  /*$(".collection-grid-carousel").slick({
     slidesToShow: 4,
     slidesToScroll: 1,
-    dots: false,
+    dots: true,
+    arrows: false,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          arrows: true,
           slidesToShow: 3
         }
       },
       {
         breakpoint: 768,
         settings: {
-          arrows: true,
           slidesToShow: 2
         }
       },
@@ -44,6 +45,6 @@ $(document).ready(function () {
         }
       }
     ]
-  });
-
+  });*/
+  
 });

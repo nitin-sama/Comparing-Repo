@@ -13,21 +13,19 @@
         </div>
     </collapsible-button>
 
-
-
-    <div class="collapsible-content">
-        <div class="content rte">
-            <div class="text-link-animated">
-                
-                {% if heading == 'PRODUCT DESCRIPTION' %}
-                    {{ product.metafields.custom.product_description | newline_to_br }}
-                {% else %}
-                    {{ content }}
-                {% endif %}
+    
+        <div class="collapsible-content">
+            <div class="content rte">
+                <div class="text-link-animated">
+                    {% if heading == 'PRODUCT DESCRIPTION' %}
+                        {{ product.metafields.custom.product_description | newline_to_br }}
+                    {% else %}
+                        {{ content }}
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-        
+    
 </div>
 
 <div class="no-js">
@@ -46,11 +44,14 @@
                     {% endif %}
                 </span>
             </summary>
+
+            
             {% if content != blank %}
                 <div class="rte text-link-animated">
                     {{ content }}
                 </div>
             {% endif %}
+            
         </details>
     </div>
 </div>

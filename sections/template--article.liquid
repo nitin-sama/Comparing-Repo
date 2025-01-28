@@ -26,17 +26,14 @@
   <h1 class="page--title">{{ article.title }}</h1>
 </div>
 {% if section.settings.blog_show_date %}
-  <time class="post-time indiv-post-time" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | time_tag: format: 'date' }}</time>
-  {% comment %}
   <time class="post-time indiv-post-time" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | time_tag: format: 'date' }} by {{ article.author }}</time>
-  {% endcomment %}
 {% endif %}
 
 <div class="grid blog-main--wrapper">
 
-  <article class="grid__item large--three-quarters">
+  <article class="grid__item large--three-quarters" itemscope itemtype="http://schema.org/Article">
 
-    <div class="rte text-link-animated">
+    <div class="rte text-link-animated" itemprop="articleBody">
   		{% if article.image %}
   			<div class="article--image-wrapper">
             {% capture article_alt %}{{ article.image.alt | default: article.title }}{% endcapture %}
@@ -271,40 +268,6 @@
   </aside>
 </div>
 </div>
-
-<script type="application/ld+json">
-{
-	"@context": "http://schema.org",
-	"@type": "BlogPosting",
-	"mainEntityOfPage": {
-	    "@type": "WebPage",
-	    "@id": "{{ article.url }}"
-	},
-    "headline": {{ article.title | json }},
-    "description": {{ article.content | strip_html | truncatewords: 25 | json }},
-    "image": {
-	    "@type": "imageObject",
-	    "url": "https:{{ article.image.src | img_url: 'original' }}",
-	    "width": "1024px",
-	    "height": "1024px"
-	},
-	"author": {
-	    "@type": "Person",
-	    "name": "{{ article.author }}"
-	},   
-    "publisher": {
-	    "@type": "Organization",
-	    "name": "{{ shop.name }}",
-	    "logo": {
-	      "@type": "ImageObject",
-	      "url": "https://thirtyyears.com/cdn/shop/files/BIGTY_BLACK_72aaf1b0-4a6c-428b-9b75-22b0b8531a19.png?v=1709792609&width=750"
-	    }
-	},
-	"dateCreated": "{{ article.created_at | date: '%Y-%m-%dT%T' }}",
-    "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%T' }}",
-    "dateModified": "{{ article.published_at | date: '%Y-%m-%dT%T' }}"
-   }
-</script>
 
 {% schema %}
 {

@@ -13,6 +13,14 @@
   <div class="wrapper-padded">
     <div class="grid wow fadeInUp">
 
+      {% if settings.enable_breadcrumbs %}
+        <div class="grid__item">
+          <div id="breadcrumbs">
+            {% render 'breadcrumb' %}
+          </div>
+        </div>
+      {% endif %}
+
       {% if section.settings.form_title != blank %}
         <div class="grid__item {{ form_width }} sitewide--title-wrapper">
           <h2 class="homepage-sections--title">{{ section.settings.form_title }}</h2>

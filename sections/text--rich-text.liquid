@@ -8,6 +8,15 @@
         {%- assign section_width = 'large--two-thirds push--large--one-sixth' -%}
 {% endcase %}
 
+{% assign has_valid_block = false %}
+
+{% for block in section.blocks %}
+  {% if block.settings.heading != blank or block.settings.text != blank or block.settings.button_text != blank or block.settings.page.content %}
+    {% assign has_valid_block = true %}
+  {% endif %}
+{% endfor %}
+
+{% if has_valid_block %}
 <div
   class="homepage-sections-wrapper homepage-sections-wrapper--{{ section.settings.colors }} "
     data-wetheme-section-type="text--rich-text" data-wetheme-section-id="{{ section.id }}"
@@ -60,6 +69,7 @@
 </div>
 
 </div>
+{% endif %}
 
 {% schema %}
 {

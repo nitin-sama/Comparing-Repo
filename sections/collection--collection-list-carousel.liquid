@@ -159,7 +159,11 @@
 												{% if section.settings.content-position == 'below-image' and block.settings.collection != blank %}
 													<a href="{{ collection.url }}" tabindex="-1">
 												{% endif %}
+                                                    {% if block.settings.collection-title != blank %}
+                                                    <h2 class="grid-item__title">{{ block.settings.collection-title }}</h2>
+                                                    {% else %}
 													<h2 class="grid-item__title">{{ collection_title }}</h2>
+                                                    {% endif %}
 												{% if section.settings.content-position == 'below-image' and block.settings.collection != blank %}
 													</a>
 												{% endif %}
@@ -201,7 +205,7 @@
 {
   "name": "Collection List Carousel",
   "class": "featured-collections-wrapper",
-  "max_blocks": 10,
+  "max_blocks": 9,
   "settings": [
     {
       "type": "select",
@@ -242,10 +246,10 @@
       "type": "range",
       "id": "items-per-row",
       "min": 1,
-      "max": 8,
+      "max": 4,
       "step": 1,
       "label": "t:sections.collection--collection-list.settings.items-per-row.label",
-      "default": 8
+      "default": 3
     },
     {
       "type": "checkbox",
@@ -311,6 +315,11 @@
           "type": "image_picker",
           "label": "t:all.Image_Optional",
           "info": "t:sections.collection--collection-list.blocks.featured_collection.settings.collection_img.info"
+        },
+        {
+          "type": "text",
+          "id": "collection-title",
+          "label": "Collection Title(Optional)"
         },
         {
           "type": "text",

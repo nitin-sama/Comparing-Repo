@@ -184,135 +184,15 @@
 
   <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
 
-  {% if template.name == 'index' %}
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org/",
-    "@type": "WebSite",
-    "name": "Thirtyyears",
-    "url": "https://thirtyyears.com/",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://thirtyyears.com/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-  {% endif %}
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JSND66RRZM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  {% if template.name == 'index' %}
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Thirty Years",
-    "description": "Thirty Years is a Los Angeles-based, women’s premium fashion label that offers timeless wardrobe basics designed for everyday life. We create essentials such as tops, pants, and dresses with a focus on versatility, quality, and inclusive sizing.",
-    "url": "https://thirtyyears.com/",
-    "logo": "https://thirtyyears.com/cdn/shop/files/BIGTY_BLACK_72aaf1b0-4a6c-428b-9b75-22b0b8531a19.png?v=1709792609&width=750",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "707-656-1968",
-      "email": "orders@thirtyyears.com",
-      "contactType": "customer service",
-      "areaServed": "US",
-      "availableLanguage": "en"
-    },
-      "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Canoga Park",
-          "addressCountry": "US",
-          "addressRegion": "CA",
-          "postalCode": "91303"
-    },
-    "sameAs": [
-      "http://instagram.com/thirtyyears",
-      "http://pinterest.com/thirtyyears_/",
-      "https://www.tiktok.com/@thirtyyears"
-    ]
-  },
-
-  </script>
-  {% endif %}
-
-  {% if page.handle == 'faq' %}
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [{
-        "@type": "Question",
-        "name": "Can I change/ Cancel my order?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Please contact orders@thirtyyears.com right away if you wish to change or cancel your order. Once our warehouse has processed your order, we will be unable to make any changes/cancellations."
-        }
-      },{
-        "@type": "Question",
-        "name": "Where Is My Order Confirmation?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "You will receive an email confirmation to the email address you entered on your order. If you have not received an email confirmation, please check your spam folder. If you have not received an email confirmation, then the order has not gone through or you did not enter your email address correctly. Please contact orders@thirtyyears.com for further assistance."
-        }
-      },{
-        "@type": "Question",
-        "name": "What If I Recieved an Incorrect/Damaged Item?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "If you have received an incorrect item, please contact orders@thirtyyears.com within 3 days of receiving the incorrect item. Please include a photo of the incorrect item and order slip you received with your email correspondence. If not reported within 3 days, a replacement/refund will not be issued.
-    We do not accept any returns or exchanges on items that have been washed, worn, or appear to have been damaged by the customer."
-        }
-      },{
-        "@type": "Question",
-        "name": "Are you Filling Out Your Address Correctly?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We want you to receive your order as quick as possible! Please be thorough when filling out your shipping address to avoid any mistakes and/or delays. For example, always include 'unit' or 'apartment #' whenever applicable. Also, be sure to separate addresses between \"Address Line 1\" & \"Address Line 2\". See below:
-
-    First Name | Last Name
-
-    Company (optional)
-
-    Address
-
-    Apartment, suite, etc. (optional)
-
-    City
-
-    ------
-
-    If you fail to enter your information properly and our system cannot verify the address, you order will be placed on hold. If we do not receive an address confirmation and/or correction from you, your order may be cancelled."
-        }
-      },{
-        "@type": "Question",
-        "name": "Was I Charged More Than Once?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "What you are seeing on your bank account is an authorization (a common bank practice handling credit card transactions to ensure sufficient funds and account authenticity). Depending on your bank, pending authorizations on your account will clear within 3 - 7 business days. If you need help speeding up the process, you can contact the issuing bank of your credit card."
-        }
-      },{
-        "@type": "Question",
-        "name": "Why Won't My Discount/Credit Code Work?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Please be sure your code is entered correctly and applied before submitting your order. Promotional codes do expire; please look at the terms and conditions of the discount code to make sure the offer is still valid.
-
-    If you have received a unique code from us, please keep in mind it can only be used once and cannot be combined with another promotion or be applied to shipping costs. Unique credit codes do not expire.
-
-    All promotions and/or codes cannot be applied after the transaction is complete.
-
-    **Discount codes are not applicable to items already on sale."
-        }
-      },{
-        "@type": "Question",
-        "name": "Situations Beyond Our Control",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Thirty Years shall not be held liable for service interruption arising from situations beyond our control. These may include, but are not limited to: incorrect shipping information, inability to obtain consignee signature, refusal of shipment, riots, strikes or labor disputes, natural disasters, and acts of God."
-        }
-      }]
-    }
-  </script>
-  {% endif %}
+  gtag('config', 'G-JSND66RRZM');
+</script>
 
 </head>
 

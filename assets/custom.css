@@ -31,30 +31,18 @@
 }
 /*** Homepage styles end ***/
 
-/**** Blog page styles start ****/
-.blog-main--wrapper .blog-main--title{
-  text-transform: uppercase;
-}
-.blog-main--wrapper .page--title{
-  margin-bottom: 40px;
-}
-/**** Blog page styles end ****/
-
-/**** Article page styles start ****/
-.template-article .rte .article--image-wrapper{
-  max-width: 60%;
-  margin: 0 auto;
-}
-.template-article .rte .article--image-wrapper img{
-  width: 100%;
-}
-.template-article .rte img{
-  width: auto;
-}
-/**** Article page styles end ****/
 
 /**** Product page Sticky Add to cart styles start ****/
 @media (max-width: 767px){
+
+    .template-product .product-details--form-wrapper {
+    min-height: 800px;
+}
+  
+/* .template-product .form-vertical.sticky-add-to-cart{
+  min-height: 707px;
+} */
+  
 .template-product .sticky-add-to-cart.visible{
   opacity: 1;
   visibility: visible;
@@ -69,6 +57,7 @@
   box-shadow: 0 -2px 7px #dcdcdc;
   padding: 15px;
   left:0;
+  min-height: initial;
 }
 .template-product .sticky-add-to-cart.visible .product-details-product-title,
 .template-product .sticky-add-to-cart.visible .product-price-group,
@@ -108,6 +97,28 @@
 }
 }
 /**** Product page Sticky Add to cart styles end ****/
+
+/**** Blog page styles start ****/
+.blog-main--wrapper .blog-main--title{
+  text-transform: uppercase;
+}
+.blog-main--wrapper .page--title{
+  margin-bottom: 40px;
+}
+/**** Blog page styles end ****/
+
+/**** Article page styles start ****/
+.template-article .rte .article--image-wrapper{
+  max-width: 60%;
+  margin: 0 auto;
+}
+.template-article .rte .article--image-wrapper img{
+  width: 100%;
+}
+.template-article .rte img{
+  width: auto;
+}
+/**** Article page styles end ****/
 
 /**** Product page payment button styles start ****/
 .product-form-wrapper .paymentButtonsWrapper .shopify-payment-button{
@@ -174,12 +185,39 @@
 #breadcrumbs .breadcrumb a span{
   text-transform: none;
 }
+.product-section #breadcrumbs{
+  margin-bottom: -20px;
+}
 /**** Breadcrumbs styles end *****/
 
 /**** Collection List Carousel styles start ****/
 .featured-collections-wrapper .homepage-collections-background .collection-grid-carousel.keep-spacing {
-    padding-left: 40px;
-    padding-right: 40px;
+    /*padding-left: 40px;
+    padding-right: 40px;*/
+    padding: 0;
+    margin: 0 10px;
+    overflow-x: scroll;
+    display: flex;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: #000 #e0e0e2;
+    scrollbar-width: thin;
+    flex-direction: row;
+    padding: 0;
+    justify-content: initial;
+}
+/* Handle */
+.featured-collections-wrapper .homepage-collections-background .collection-grid-carousel.keep-spacing::-webkit-scrollbar-corner {
+  border-radius: 0;
+}
+.featured-collections-wrapper .homepage-collections-background .collection-grid-carousel.keep-spacing::-webkit-scrollbar {
+  width: 20px;
+}
+.featured-collections-wrapper .collection-grid-carousel.keep-spacing .homepage-collection-grid-item{
+    flex: 0 0 100%;
+    width: 100%;
+    scroll-snap-align: start;
+    padding: 15px 15px 0 15px;
 }
 .collection-grid-carousel .slick-arrow{
     position: absolute;
@@ -200,12 +238,38 @@
     right: 14px;
     transform: translateY(-50%) rotate(-45deg);
 }
+.collection-grid-carousel .homepage-collection-grid-inner .grid-item__title{
+    background-color: rgba(255, 255, 255, .46);
+    padding: 0 5px;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+@media (min-width: 600px){
+.featured-collections-wrapper .collection-grid-carousel.keep-spacing .homepage-collection-grid-item{
+    flex: 0 0 50%;
+    width: 50%;
+}  
+}
 @media (min-width: 768px){
+.featured-collections-wrapper .collection-grid-carousel.keep-spacing .homepage-collection-grid-item{
+    flex: 0 0 33.33%;
+    width: 33.33%;
+}
 .collection-grid-carousel .slick-prev{
     left: 20px;
 }
 .collection-grid-carousel .slick-next{
     right: 20px;
+}
+.featured-collections-wrapper .homepage-collections-background .collection-grid-carousel.keep-spacing {
+    margin: 0 40px;
+}
+}
+@media (min-width: 1024px){
+.featured-collections-wrapper .collection-grid-carousel.keep-spacing .homepage-collection-grid-item{
+    flex: 0 0 25%;
+    width: 25%;
 }  
 }
 /**** Collection List Carousel styles end ****/
+

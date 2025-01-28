@@ -93,6 +93,11 @@
       language-url="{{ localization.language.root_url }}"
     >
       <div class="product-single-wrapper">
+        {% if settings.enable_breadcrumbs %}
+          <div id="breadcrumbs">
+            {% render 'breadcrumb' %}
+          </div>
+        {% endif %}
         <div
           class="grid product-single{% if section.settings.enable_sticky %} product-sticky-wrapper{% endif %}{% if options_block.settings.variant_style == 'dropdowns' %} variant-dropdown-enabled{% else %} variant-swatches-enabled{% endif %}"
           data-section-id="{{ section.id }}"
@@ -108,17 +113,10 @@
               <div class="product-details-wrapper">
 
               <div class="product-details--form-wrapper{% if product.available %} product-details--form-wrapper---in-stock{% else %} product-details--form-wrapper---out-of-stock{% endif %}">
-
                 <div class="form-vertical sticky-add-to-cart">
                   {% form 'product', product, id: "AddToCartForm" %}
 
                   {% assign spacing_classes = 'product-form-block' %}
-
-                  {% if settings.enable_breadcrumbs %}
-                    <div id="breadcrumbs">
-                      {% render 'breadcrumb' %}
-                    </div>
-                  {% endif %}
 
                   {%- for block in section.blocks -%}
                     {%- case block.type -%}
@@ -338,13 +336,27 @@
                         %}
                         
                         {% assign content = block.settings.text %}
+                        {% comment %}
                         {% if block.settings.page.content %}
                           {% assign content = content | append: block.settings.page.content %}
                         {% endif %}
+                        {% endcomment %}
 
+
+                        {% if block.settings.text contains 'custom.product_description' and product.metafields.custom.product_description %}
+                          {% assign content = product.metafields.custom.product_description.value %}
+                        {% elsif block.settings.text contains 'custom.product_description_main' and product.metafields.custom.product_description_main %}
+                          {% assign content = product.metafields.custom.product_description_main.value %}
+                        {% elsif block.settings.page.content %}
+                          {% assign content = content | append: block.settings.page.content %}
+                        {% endif %}
+
+                      
+                      
                         {%- if icon != 'none' or block.settings.heading != blank or content != blank -%}
 
                           <div class="collapsible-tab-container collapsible {{ spacing_classes }}{% if block.settings.margin_bottom == 0 %} no_margin_bottom{% endif %}" style="--custom-margin-bottom: {{ block.settings.margin_bottom }}px" {{ block.shopify_attributes }}>
+                            
                             {% render 'collapsible-tab', icon: icon, custom_icon: custom_icon, heading: block.settings.heading, content: content, open_close_icon: block.settings.open_close_icon, open_by_default: block.settings.open_by_default, heading_classes: 'label-font' %}
                           </div>
 

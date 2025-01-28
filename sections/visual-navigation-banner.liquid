@@ -29,7 +29,7 @@
           {% endif %}
 
           {% if block.settings.link_image != blank %}
-            {{ block.settings.link_image | image_url: width: 4000 | image_tag: alt: img_alt, class: 'visual-nav-img' }}
+            {{ block.settings.link_image | image_url: width: 2000 | image_tag: alt: img_alt, class: 'visual-nav-img' }}
           {% else %}
             {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
             {{ 'collection-' | append: current | placeholder_svg_tag: 'icon icon--placeholder' }}
@@ -140,6 +140,4 @@
     ]
   }
 }
-
-    
 {% endschema %}
